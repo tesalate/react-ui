@@ -1,0 +1,53 @@
+version: '3.2'
+services:
+  # this is the web application we are going to use in prod
+  ui:
+    build:
+      context: ./
+      args: 
+        BUILD_ENVIRONMENT: prod
+    image: devintyler2626/tesalate-ui:latest
+    ports:
+      - '80:80'
+
+  # this is the web application we are going to use in uat 
+  myTesla-uat:
+    build:
+      context: ./
+      args: 
+        BUILD_ENVIRONMENT: uat
+    ports:
+      - '80:80' 
+
+  # this is the web application we are going use locally
+  myTesla-local:
+    build:
+      context: ./
+      args: 
+        BUILD_ENVIRONMENT: local
+    ports:
+      - '80:80'
+
+  # this is the web application we are going to test
+  myTesla-pr:
+    build:
+      context: ./
+      args: 
+        BUILD_ENVIRONMENT: pr
+    ports:
+      - '80:80'
+
+
+  # Cypress container
+  cypress:
+    # the Docker image to use from https://github.com/cypress-io/cypress-docker-images
+    image: "cypress/included:4.7.0"
+    depends_on:
+      - myTesla-pr
+    environment:
+      # pass base url to test pointing at the web application
+      - CYPRESS_baseUrl=http://myTesla-pr:80
+    # share the current folder as volume to avoid copying
+    working_dir: /e2e
+    volumes:
+      - ./:/e2e

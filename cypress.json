@@ -1,0 +1,13 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
+  "integrationFolder": "./src/",
+  "testFiles": "**/*.cy.spec.ts",
+  "modifyObstructiveCode": false,
+  "chromeWebSecurity": false,
+  "env": {
+    "REACT_APP_API_URL": "https://localhost:4200"
+  },
+  "video": false
+}

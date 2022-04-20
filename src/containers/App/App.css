@@ -1,0 +1,40 @@
+
+/**** COMMON APP WIDE STYLING ***/
+.boxShadow {
+  /* box-shadow : 0 8px 8px rgba(0,0,0,0.20); */
+};
+
+
+.invert {
+  filter: invert(1); 
+}
+
+.login {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
+
+.app-content{
+  z-index: 999;
+}
+
+.leaflet-popup,
+.leaflet-popup-tip,
+.leaflet-popup-content-wrapper {
+  z-index: 9999 !important; /* Set z-index to 0 as it will be on a layer below the contact form */  
+  border-radius: 1rem;
+  background: #282c34 !important;
+  color: white;
+}
+
+.leaflet-container.landing-page-map {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0 !important; /* Set z-index to 0 as it will be on a layer below the contact form */
+}

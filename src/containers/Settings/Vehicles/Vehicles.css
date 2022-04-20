@@ -1,0 +1,5 @@
+.vehicleBox:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+}
+.vehicleBox { transition: all .2s ease-in-out; }

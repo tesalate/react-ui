@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib"   : [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": [
+      "cypress",
+    ],
+    "allowJs"                         : true,
+    "skipLibCheck"                    : true,
+    "esModuleInterop"                 : true,
+    "allowSyntheticDefaultImports"    : true,
+    "strict"                          : true,
+    "forceConsistentCasingInFileNames": true,
+    "module"                          : "esnext",
+    "moduleResolution"                : "node",
+    "resolveJsonModule"               : true,
+    "jsx"                             : "react",
+    "sourceMap"                       : true,
+    "declaration"                     : true,
+    "noUnusedLocals"                  : true,
+    "noUnusedParameters"              : true,
+    "experimentalDecorators"          : true,
+    "noFallthroughCasesInSwitch"      : true,
+    "isolatedModules"                 : true,
+    "noEmit"                          : true,
+    "downlevelIteration": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "**/*.index.spec.ts",
+    "**/*.sagas.spec.ts",
+    "node_modules",
+    "build"
+  ],
+  "files": [
+    "cypress/support/index.d.ts"
+  ]
+}
