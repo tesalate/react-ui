@@ -62,7 +62,8 @@
     "cypress": "cypress open",
     "cypress-headless": "cypress run",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
-    "cm": "cz"
+    "cm": "cz",
+    "release": "standard-version"
   },
   "eslintConfig": {
     "extends": [
@@ -109,7 +110,8 @@
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-cypress": "^2.11.0",
     "eslint-plugin-jest": "^23.13.2",
-    "eslint-plugin-react": "^7.20.0"
+    "eslint-plugin-react": "^7.20.0",
+    "standard-version": "^9.3.2"
   },
   "config": {
     "commitizen": {
