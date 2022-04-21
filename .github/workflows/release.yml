@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
         id: semantic
         with:
           semantic_version: 18
@@ -20,10 +20,11 @@ jobs:
             @semantic-release/changelog@6
             @semantic-release/git@10
             conventional-changelog-conventionalcommits@4.6.1
+            conventional-changelog-eslint@3.0.9
           branches: |
             [
               '+([0-9])?(.{+([0-9]),x}).x',
-              'master', 
+              'main', 
               'next', 
               'next-major', 
               {
