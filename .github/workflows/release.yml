@@ -20,6 +20,7 @@ jobs:
             @semantic-release/changelog@6
             @semantic-release/git@10
             conventional-changelog-conventionalcommits@4.6.1
+            conventional-changelog-eslint@3.0.9
           branches: |
             [
               '+([0-9])?(.{+([0-9]),x}).x',
