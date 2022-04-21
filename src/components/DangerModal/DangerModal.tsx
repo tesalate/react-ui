@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import config from '../../config/config';
 import { toTitleCase } from '../../utils/formatFunctions';
 
 interface IModalProps {
@@ -37,7 +38,7 @@ const DangerModal: React.FC<IModalProps> = ({ theme }) => {
           </p>
           <hr />
           <p>
-            <small>Need to log into a different {toTitleCase((process.env.REACT_APP_NAME as string) ?? 'tesalate')} account?</small>
+            <small>Need to log into a different {toTitleCase(config.appName)} account?</small>
           </p>
           <Row className="d-flex justify-space-between m-0 p-0">
             <Col className="m-0 p-0">

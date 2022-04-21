@@ -6,13 +6,13 @@
       {
         "preset": "eslint",
         "releaseRules": [
-          { "tag": "Breaking", "release": "major" },
-          { "tag": "Build", "release": "minor" },
-          { "tag": "Chore", "release": "minor" },
-          { "tag": "Fix", "release": "patch" },
-          { "tag": "New", "release": "minor" },
-          { "tag": "Update", "release": "minor" },
-          { "tag": "Upgrade", "release": "minor" }
+          { "tag": "breaking", "release": "major" },
+          { "tag": "build", "release": "minor" },
+          { "tag": "chore", "release": "minor" },
+          { "tag": "fix", "release": "patch" },
+          { "tag": "new", "release": "minor" },
+          { "tag": "update", "release": "minor" },
+          { "tag": "upgrade", "release": "minor" }
         ]
       }
     ],
@@ -21,13 +21,13 @@
       {
         "preset": "eslint",
         "releaseRules": [
-          { "tag": "Breaking", "release": "major" },
-          { "tag": "Build", "release": "minor" },
-          { "tag": "Chore", "release": "minor" },
-          { "tag": "Fix", "release": "patch" },
-          { "tag": "New", "release": "minor" },
-          { "tag": "Update", "release": "minor" },
-          { "tag": "Upgrade", "release": "minor" }
+          { "tag": "breaking", "release": "major" },
+          { "tag": "build", "release": "minor" },
+          { "tag": "chore", "release": "minor" },
+          { "tag": "fix", "release": "patch" },
+          { "tag": "new", "release": "minor" },
+          { "tag": "update", "release": "minor" },
+          { "tag": "upgrade", "release": "minor" }
         ]
       }
     ],
