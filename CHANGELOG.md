@@ -1,3 +1,10 @@
+# [0.2.0-beta.1](https://github.com/tesalate/tesalate-ui/compare/v0.1.1...v0.2.0-beta.1) (2022-04-21)
+
+
+### chore
+
+* beta release ([9a1fa80](https://github.com/tesalate/tesalate-ui/commit/9a1fa80af5b17bb00b34b1a9571702fb364b24ab))
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
