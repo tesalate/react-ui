@@ -1,7 +1,7 @@
 name: 🚀 Release
 on:
   push:
-    branches: [main]
+    branches: [main, beta, alpha]
 
 jobs:
   release:
