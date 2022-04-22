@@ -6,13 +6,14 @@
       {
         "preset": "eslint",
         "releaseRules": [
-          { "tag": "breaking", "release": "major" },
-          { "tag": "build", "release": "minor" },
-          { "tag": "chore", "release": "minor" },
-          { "tag": "fix", "release": "patch" },
-          { "tag": "new", "release": "minor" },
-          { "tag": "update", "release": "minor" },
-          { "tag": "upgrade", "release": "minor" }
+          { "type": "breaking", "release": "major" },
+          { "type": "build", "release": "minor" },
+          { "type": "chore", "release": "minor" },
+          { "type": "fix", "release": "patch" },
+          { "type": "new", "release": "minor" },
+          { "type": "update", "release": "minor" },
+          { "type": "upgrade", "release": "minor" },
+          { "type": "docs", "scope": "README", "release": "patch" }
         ]
       }
     ],
@@ -21,13 +22,14 @@
       {
         "preset": "eslint",
         "releaseRules": [
-          { "tag": "breaking", "release": "major" },
-          { "tag": "build", "release": "minor" },
-          { "tag": "chore", "release": "minor" },
-          { "tag": "fix", "release": "patch" },
-          { "tag": "new", "release": "minor" },
-          { "tag": "update", "release": "minor" },
-          { "tag": "upgrade", "release": "minor" }
+          { "type": "breaking", "release": "major" },
+          { "type": "build", "release": "minor" },
+          { "type": "chore", "release": "minor" },
+          { "type": "fix", "release": "patch" },
+          { "type": "new", "release": "minor" },
+          { "type": "update", "release": "minor" },
+          { "type": "upgrade", "release": "minor" },
+          { "type": "docs", "scope": "README", "release": "patch" }
         ]
       }
     ],
