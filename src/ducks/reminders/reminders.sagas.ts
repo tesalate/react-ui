@@ -19,12 +19,10 @@ export function* fetchReminders(action: any) {
     if (error) yield put(remindersActions.setRemindersError(false));
 
     yield put(uiActions.setComponentLoading(loadingName));
-    console.log('WHERE AM I');
     if (isConnected || isEmpty(allReminders[action.payload])) {
       const {
         data: { results },
       } = yield call(getAllReminders, action.payload);
-      console.log('WAAAA', results);
       yield put(remindersActions.setReminders(results));
     }
   } catch (error) {
