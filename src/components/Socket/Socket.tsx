@@ -42,7 +42,6 @@ const Socket: React.FC = () => {
         };
         client.onmessage = (message) => {
           const data = JSON.parse(message.data as string);
-          console.log('WHAT', data);
           dispatch(uiActions.setLastRefresh());
           if (data?.action === 'insert' && data.type.includes('sessions')) {
             dispatch(

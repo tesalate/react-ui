@@ -10,7 +10,6 @@ import { range } from 'lodash';
 const MasterTable = ({ data, columns, loading, actions, pageSizeFromState, pageIndexFromState, sortBy, error = false, style = {}, totalPages = 0 }: any) => {
   const dispatch = useDispatch();
   const [one, two] = useState(true);
-  console.log('DATA TO TABLE', { data, columns, totalPages });
 
   const {
     uiState: { theme },
