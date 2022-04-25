@@ -1,10 +1,10 @@
 {
-  "branch": ["main", "beta", "alpha"],
+  "branches": ["main", "beta", "alpha"],
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
       {
-        "preset": "eslint",
+        "preset": "conventionalcommits",
         "releaseRules": [
           { "type": "breaking", "release": "major" },
           { "type": "build", "release": "minor" },
