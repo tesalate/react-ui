@@ -4,7 +4,7 @@
     [
       "@semantic-release/commit-analyzer",
       {
-        "preset": "eslint",
+        "preset": "conventionalcommits",
         "releaseRules": [
           { "type": "breaking", "release": "major" },
           { "type": "build", "release": "minor" },
