@@ -1,3 +1,5 @@
+# [0.2.0-beta.2](https://github.com/tesalate/tesalate-ui/compare/v0.2.0-beta.1...v0.2.0-beta.2) (2022-04-25)
+
 # [0.2.0-beta.1](https://github.com/tesalate/tesalate-ui/compare/v0.1.1...v0.2.0-beta.1) (2022-04-21)
 
 
