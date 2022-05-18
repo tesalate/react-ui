@@ -1,10 +1,9 @@
 /* ========= PACKAGE IMPORTS ========= */
 import React, { useEffect, Suspense, lazy, useMemo } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Container, Spinner, Button } from 'react-bootstrap';
+import { Container, Spinner, Button, Row, Col } from 'react-bootstrap';
 import { usePageVisibility } from 'react-page-visibility';
 import platform from 'platform';
-import { useLocation } from 'react-router';
 import { ErrorBoundary } from 'react-error-boundary';
 
 /* ========= CSS IMPORTS ========= */
@@ -12,9 +11,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 /* ========= COMPONENT IMPORTS ========= */
-import NavBar from '../../components/NavBar/NavBar';
-import Socket from '../../components/Socket/Socket';
-import Toasts from '../../components/Toasts/Toasts';
 import AuthWrapper from '../../components/AuthWrapper/AuthWrapper';
 import { useThemeDetector } from '../../utils/customHooks';
 
@@ -22,16 +18,13 @@ import { useThemeDetector } from '../../utils/customHooks';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/reducers';
 import { actions as uiActions } from '../../ducks/ui/ui.index';
-import { actions as userActions } from '../../ducks/user/user.index';
-import { selectors as vehicleSelectors } from '../../ducks/vehicles/vehicles.index';
 import { useWindowSize } from '../../utils/customHooks';
 import NetworkDetector from '../../components/NetworkDetector/NetworkDetector';
-import SelectVehicleModal from '../../components/SelectVehicleModal/SelectVehicleModal';
-import NewUserModal from '../../components/NewUserModal/NewUserModal';
-import ErrorModal from '../../components/ErrorModal/ErrorModal';
-import { isEmpty } from 'lodash';
-import VerifyModal from '../../components/VerifyModal/VerifyModal';
 import Footer from '../../components/Footer/Footer';
+import NavBar from '../../components/NavBar/NavBar';
+import config from '../../config/config';
+import { toTitleCase } from '../../utils/formatFunctions';
+import SignUpComp from '../../components/SignUpComp/SignUp';
 
 /* ======== LAZY IMPORTS ========= */
 const HomePage = lazy(() => import('../HomePage/HomePage'));
@@ -45,7 +38,7 @@ const MapPage = lazy(() => import('../MapPage/MapPage'));
 const Stats = lazy(() => import('../StatsPage/StatsPage'));
 const Settings = lazy(() => import('../Settings/Settings'));
 const VerifyEmail = lazy(() => import('../VerifyEmail/VerifyEmail'));
-// const TeslaAdmin     = lazy(() => import('../Settings/TeslaAdmin/TeslaAdmin'))
+const SendVerificationEmail = lazy(() => import('../SendVerificationEmail/SendVerificationEmail'));
 
 function ErrorFallback({ error }: { error: { message: string } }) {
   return (
@@ -63,7 +56,7 @@ const App: React.FC = () => {
   const windowDimensions = useWindowSize();
   const isDarkTheme = useThemeDetector();
 
-  const { uiState, vehicles, loggedIn, teslaLinked, user, sent } = useSelector(({ uiState, userState, vehiclesState, teslaAccountState }: RootState) => ({
+  const { uiState } = useSelector(({ uiState }: RootState) => ({
     uiState: {
       loading: uiState.loading,
       pageHasFocus: uiState.pageHasFocus,
@@ -72,14 +65,7 @@ const App: React.FC = () => {
       isMobile: uiState.isMobile,
       autoTheme: uiState.autoTheme,
     },
-    loggedIn: userState.loggedIn,
-    vehicles: vehiclesState.vehicles,
-    teslaLinked: teslaAccountState.account?.linked,
-    user: userState.user,
-    sent: Date.now() < userState.sentVerificationEmail,
   }));
-
-  const currentVehicles = useMemo(() => vehicleSelectors.getSelectedVehicles(vehicles), [vehicles]);
 
   const uiThemeAuto = useMemo(() => uiState.autoTheme, [uiState.autoTheme]);
 
@@ -102,12 +88,6 @@ const App: React.FC = () => {
     dispatch(uiActions.setOperatingSystem(platform.os ?? {}));
   }, [dispatch]);
 
-  useEffect(() => {
-    if (loggedIn) {
-      dispatch(uiActions.getUiFromDBSettings());
-    }
-  }, [dispatch, loggedIn, navigator.userAgent]);
-
   /**** effect for setting page focus ****/
   useEffect(() => {
     dispatch(uiActions.setPageFocus(isVisible));
@@ -124,22 +104,6 @@ const App: React.FC = () => {
     paddingBottom: '2.5rem' /* Footer height */,
   };
 
-  const path = useLocation().pathname;
-
-  const showVerifyModal = useMemo(() => !user?.isEmailVerified && !!loggedIn && !['logout', 'login', 'verify-email'].some((substring: string) => path.includes(substring)), [loggedIn, user, path]);
-
-  const showErrorModal = useMemo(() => (isEmpty(user) || !user) && !!loggedIn && !['logout', 'login', 'verify-email'].some((substring: string) => path.includes(substring)), [loggedIn, user, path]);
-
-  const showTeslaModal = useMemo(
-    () => !showVerifyModal && !showErrorModal && currentVehicles.length === 0 && vehicles?.length === 0 && !!loggedIn && !teslaLinked && !['logout', 'settings', 'verify-email'].some((substring: string) => path.includes(substring)),
-    [currentVehicles, vehicles, loggedIn, teslaLinked, path, showErrorModal, showVerifyModal]
-  );
-
-  const showSelectVehicleModal = useMemo(
-    () => !showVerifyModal && !showErrorModal && currentVehicles?.length === 0 && vehicles?.length > 0 && !!loggedIn && !!teslaLinked && !['logout', 'settings', 'verify-email'].some((substring: string) => path.includes(substring)),
-    [currentVehicles, vehicles, loggedIn, teslaLinked, path, showErrorModal, showVerifyModal]
-  );
-
   return (
     <AuthWrapper>
       <ErrorBoundary
@@ -151,21 +115,23 @@ const App: React.FC = () => {
         <Container fluid style={{ ...containerStyling }} className="px-xs-1 px-sm-2 px-md-3 px-lg-4">
           <div style={{ ...wrapperStyling }}>
             <NetworkDetector />
-            <Toasts />
-            <Socket />
-            {showVerifyModal && <VerifyModal theme={uiState.theme} loading={uiState.loading.SendingVerificationEmail.length > 0} requestVerificationEmail={userActions.requestVerificationEmail} sent={sent} />}
-            {showErrorModal && <ErrorModal theme={uiState.theme} />}
-            {showTeslaModal && <NewUserModal theme={uiState.theme} user={user} />}
-            {showSelectVehicleModal && <SelectVehicleModal theme={uiState.theme} />}
             <NavBar />
+
             <Suspense
               fallback={
-                <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}>
-                  <Spinner as="span" animation="border" role="status" aria-hidden="true" />
-                </div>
+                <Row className="mx-auto text-center" style={{ height: '80vh' }}>
+                  <Col className="my-auto">
+                    <Spinner as="img" animation="border" role="status" aria-hidden="true" size="sm" className="mx-2" />
+                    <br />
+                    <b className="mb-2">{toTitleCase(config.appName)}</b>
+                  </Col>
+                </Row>
               }
             >
               <Switch>
+                <Route path="/sign-up/:token?">
+                  <SignUpComp />
+                </Route>
                 <Route exact path="/login">
                   <LoginComp />
                 </Route>
@@ -175,6 +141,12 @@ const App: React.FC = () => {
                 <Route path="/verify-email">
                   <VerifyEmail />
                 </Route>
+                <Route exact path="/password-reset">
+                  <>RESET PASSWORD</>
+                </Route>
+                <ProtectedRoute exact path="/send-verification-email">
+                  <SendVerificationEmail />
+                </ProtectedRoute>
                 <ProtectedRoute exact path="/drive-sessions/:id?">
                   <DriveSessions />
                 </ProtectedRoute>
@@ -190,9 +162,6 @@ const App: React.FC = () => {
                 <ProtectedRoute exact path="/map">
                   <MapPage />
                 </ProtectedRoute>
-                {/* <ProtectedRoute exact path='/tesla-admin'>
-              <TeslaAdmin />
-            </ProtectedRoute> */}
                 <ProtectedRoute exact path="/settings/:tab?">
                   <Settings />
                 </ProtectedRoute>

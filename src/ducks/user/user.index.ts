@@ -19,9 +19,10 @@ export interface IUser {
 export interface State {
   user: IUser | null;
   userError: boolean;
+  userRegisterError: { message: string | null };
   loggedIn: boolean;
   settings: {};
-  sentVerificationEmail: number;
+  sentVerificationEmail: number | null;
   verificationSuccess: boolean;
 }
 
@@ -29,14 +30,16 @@ export interface State {
 export const initialState: State = {
   user: null,
   userError: false,
+  userRegisterError: { message: null },
   loggedIn: isTruthy(sessionStorage.getItem('loggedIn')) || false,
   settings: {},
-  sentVerificationEmail: Date.now(),
+  sentVerificationEmail: null,
   verificationSuccess: false,
 };
 
 /* ===== TYPES ===== */
 export enum ActionTypes {
+  REGISTER_USER = '[USER] REGISTER_USER',
   SET_USER = '[USER] SET_USER',
   SET_TOKEN = '[USER] SET_TOKEN',
   SET_LOGGED_IN = '[USER] SET_LOGGED_IN',
@@ -44,6 +47,7 @@ export enum ActionTypes {
   LOGIN_USER = '[USER] LOGIN_USER',
   LOGOUT_USER = '[USER] LOGOUT_USER',
   SET_USER_ERROR = '[USER] SET_USER_ERROR',
+  SET_REGISTER_USER_ERROR = '[USER] SET_REGISTER_USER_ERROR',
   SOCKET_UPDATE = '[USER] SOCKET_UPDATE',
   LOGIN_TESLA = '[USER] LOGIN_TESLA',
   UPDATE_MINING_STATUS = '[USER] UPDATE_MINING_STATUS',
@@ -56,6 +60,7 @@ export enum ActionTypes {
 
 /* ===== ACTION_CREATORS ===== */
 export const actions = {
+  register: (body: Partial<IUser>): Action => ({ type: ActionTypes.REGISTER_USER, payload: body }),
   logOutUser: (redirect?: string): Action => ({ type: ActionTypes.LOGOUT_USER, payload: redirect }),
   setUser: (user?: IUser): Action => ({ type: ActionTypes.SET_USER, payload: user }),
   setLoggedIn: (bool: boolean): Action => ({ type: ActionTypes.SET_LOGGED_IN, payload: bool }),
@@ -63,6 +68,7 @@ export const actions = {
   socketUpdate: (user?: IUser): Action => ({ type: ActionTypes.SOCKET_UPDATE, payload: user }),
   getUserData: (showLoading: boolean): Action => ({ type: ActionTypes.GET_USER_DATA, payload: showLoading }),
   setUserError: (value: boolean): Action => ({ type: ActionTypes.SET_USER_ERROR, payload: value }),
+  setRegisterUserError: (value: { message: string | null }): Action => ({ type: ActionTypes.SET_REGISTER_USER_ERROR, payload: value }),
   loginUser: (username: string, password: string): Action => ({ type: ActionTypes.LOGIN_USER, payload: { username, password } }),
   loginTesla: ({ username, password, refreshToken }: { username?: string; password?: string; refreshToken?: string }): Action => ({ type: ActionTypes.LOGIN_TESLA, payload: { username, password, refreshToken } }),
   updateMiningStatus: (vid: number, active: boolean): Action => ({ type: ActionTypes.UPDATE_MINING_STATUS, payload: { vid, active } }),
@@ -82,7 +88,7 @@ const reducer = (state: State = initialState, action: Action) => {
       const token = action.payload;
       return { ...state, token };
     case ActionTypes.SET_USER:
-      const { vehicles = [], teslaAccount = {}, ...rest } = action.payload;
+      const { vehicles, teslaAccount, ...rest } = action.payload;
       return { ...state, user: rest };
     case ActionTypes.SET_USER_ERROR:
       return { ...state, userError: action.payload };
@@ -101,6 +107,8 @@ const reducer = (state: State = initialState, action: Action) => {
       return { ...state, sentVerificationEmail: action.payload };
     case ActionTypes.SET_VERIFICATION_SUCCESS:
       return { ...state, verificationSuccess: action.payload };
+    case ActionTypes.SET_REGISTER_USER_ERROR:
+      return { ...state, userRegisterError: action.payload };
     default: {
       return state;
     }

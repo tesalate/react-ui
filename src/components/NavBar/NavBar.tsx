@@ -38,7 +38,7 @@ const NavBar = () => {
 
   const doNotShowNav = useMemo(() => ['/login', '/logout', '/verify-email', '/sign-up'], []);
 
-  if (doNotShowNav.includes(location.pathname)) return null;
+  if (doNotShowNav.indexOf(location.pathname) < 0 || doNotShowNav.includes(location.pathname)) return null;
 
   return (
     <Navbar bg={`${theme}`} variant={theme ?? undefined} expand="md" className={`app-content ${isStandAlone ? 'mt-1' : ''}`} style={{ ...style.overall, border: theme === 'light' ? '1px solid #E8E8E8' : '' }} collapseOnSelect>

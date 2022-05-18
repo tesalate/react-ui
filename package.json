@@ -51,7 +51,8 @@
     "typescript": "^3.9.5",
     "use-deep-compare-effect": "^1.4.0",
     "uuid": "^8.2.0",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.34",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",

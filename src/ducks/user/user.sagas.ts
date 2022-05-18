@@ -1,6 +1,6 @@
 import { put, call, select } from 'redux-saga/effects';
 import * as Eff from 'redux-saga/effects';
-import { login, me, teslaLogin, logout, sendVerificationEmail, verifyEmail } from './user.api';
+import { login, me, teslaLogin, logout, sendVerificationEmail, verifyEmail, register } from './user.api';
 import { actions as userActions, ActionTypes as userActionTypes } from './user.index';
 import { actions as vehiclesActions /* ActionTypes as vehiclesActionTypes */ } from '../vehicles/vehicles.index';
 import { actions as teslaAccountActions /* ActionTypes as teslaAccountActionTypes */ } from '../teslaAccount/teslaAccount.index';
@@ -10,6 +10,34 @@ import { isEmpty } from 'lodash';
 
 const takeEvery: any = Eff.takeEvery;
 const loadingName = 'User';
+
+export function* registerUser(action: any) {
+  try {
+    const { error } = yield select(({ userState }: RootState) => ({
+      error: userState.userRegisterError,
+    }));
+    if (error) yield put(userActions.setRegisterUserError({ message: null }));
+
+    yield put(uiActions.setComponentLoading(loadingName));
+    yield put(uiActions.setComponentLoading('RegisterUser'));
+    const { data } = yield call(register, action.payload);
+    console.log('DATA', data);
+    yield put(userActions.setLoggedIn(true));
+    yield put(userActions.setUser(data));
+
+    window.location.assign('/send-verification-email');
+  } catch (error) {
+    // handle ui effects
+    if (error.response.data.message) {
+      console.log('HMMMM', error.response.data.message);
+      yield put(userActions.setRegisterUserError({ message: error.response.data.message }));
+    }
+    console.log('REGISTER USER ERROR', error.message);
+  } finally {
+    yield put(uiActions.removeComponentLoading(loadingName));
+    yield put(uiActions.removeComponentLoading('RegisterUser'));
+  }
+}
 
 export function* fetchLogin(action: any) {
   try {
@@ -132,7 +160,7 @@ export function* sendRequestVerificationEmail() {
 
     yield put(uiActions.setComponentLoading('SendingVerificationEmail'));
     yield call(sendVerificationEmail);
-    yield put(userActions.setSentVerificationEmail(Date.now() + 60000));
+    yield put(userActions.setSentVerificationEmail(Date.now() + 600000));
   } catch (err) {
     // handle ui effects
     yield put(userActions.setUserError(true));
@@ -169,6 +197,7 @@ export function* fetchVerifyRequest(action: any) {
 export default function userSagas() {
   return [
     takeEvery(userActionTypes.LOGIN_USER, fetchLogin),
+    takeEvery(userActionTypes.REGISTER_USER, registerUser),
     takeEvery(userActionTypes.LOGIN_TESLA, fetchTeslaLogin),
     takeEvery(userActionTypes.GET_USER_DATA, fetchMe),
     takeEvery(userActionTypes.LOGOUT_USER, handleLogOut),
