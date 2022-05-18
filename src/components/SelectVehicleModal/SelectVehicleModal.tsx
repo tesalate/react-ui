@@ -23,7 +23,7 @@ const SelectVehicleModal: React.FC<IModalProps> = ({ theme }) => {
 
   return (
     <>
-      <Modal show={show} onHide={() => !!selected && setShow(false)} dialogClassName="modal-dark" aria-labelledby="example-custom-modal-styling-title" style={{ zIndex: 9999999999 }} className="standard-modal" backdrop="static" centered>
+      <Modal show={show} onHide={() => !!selected && setShow(false)} dialogClassName="modal-dark" aria-labelledby="example-custom-modal-styling-title" style={{ zIndex: 999999999 }} className="standard-modal" backdrop="static" centered>
         <Modal.Header className={theme === 'dark' ? 'bg-dark' : ''}>
           <Modal.Title id="example-custom-modal-styling-title">Select a Vehicle</Modal.Title>
         </Modal.Header>

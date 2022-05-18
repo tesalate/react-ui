@@ -37,7 +37,7 @@ const uiPersistConfig = {
 const userPersistConfig = {
   key: 'user',
   storage: localForage,
-  blacklist: ['loggedIn', 'userError'],
+  blacklist: ['loggedIn', 'userError', 'userRegisterError'],
 };
 
 const completeDataPointsPersistConfig = {

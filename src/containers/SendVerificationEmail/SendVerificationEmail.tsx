@@ -3,72 +3,66 @@ import { useSelector, useDispatch } from 'react-redux';
 import { actions as userActions } from '../../ducks/user/user.index';
 import { RootState } from '../../redux/reducers';
 import { Row, Col, Button, Spinner } from 'react-bootstrap';
-import { useQuery } from '../../utils/customHooks';
-import caution from '../../assets/caution.png';
 import { Link } from 'react-router-dom';
 
-const VerifyEmail: React.FC = () => {
+const SendVerificationEmail: React.FC = () => {
   const dispatch = useDispatch();
-  const query = useQuery();
-  const token = query.get('token');
 
-  const { loading, verificationSuccess, error } = useSelector(({ uiState, userState }: RootState) => ({
-    loading: uiState.loading['VerifyRequest'].length > 0,
+  const { loading, error, isVerified, sent } = useSelector(({ uiState, userState }: RootState) => ({
+    loading: uiState.loading['SendingVerificationEmail'].length > 0,
     verificationSuccess: userState.verificationSuccess,
     error: userState.userError,
+    isVerified: userState.user?.isEmailVerified,
+    sent: userState.sentVerificationEmail !== null && Date.now() < userState.sentVerificationEmail,
   }));
 
   useEffect(() => {
-    if (token) {
-      dispatch(userActions.sendVerifyRequest(token));
+    if (!isVerified && !sent) {
+      dispatch(userActions.requestVerificationEmail());
     }
-  }, [dispatch, token]);
+  }, [dispatch, isVerified]);
 
   const returnHomeButton = (
-    <Button variant="link" size="sm" as={Link} to={'/'}>
+    <Button variant="outline-secondary" size="sm" as={Link} to={'/'} className="mt-2">
       Return home
     </Button>
   );
 
   let content;
-  // ERROR STATE
-  if (!verificationSuccess && error) {
+  if (isVerified) {
     content = (
       <>
-        <img src={caution} style={{ maxHeight: 'clamp(1rem, 5vw, 3rem)' }} alt="caution" />
-        <p className="text-muted mb-1">
-          There was an error verifying your email. <br /> If the error persists, request a new verification email.
-        </p>
+        <span role="img" aria-label="Partying Face">
+          🥳
+        </span>{' '}
+        You are already verified! <br />
         {returnHomeButton}
       </>
     );
-  }
-  // LOADING STATE
-  else if (loading) {
+  } else if (loading) {
     content = (
       <>
-        <Spinner as="span" animation="border" role="status" aria-hidden="true" size="sm" /> Verifying email...
+        <Spinner as="span" animation="border" role="status" aria-hidden="true" size="sm" /> Sending Verification email...
       </>
     );
   }
 
   // DONE STATE
-  else if (verificationSuccess) {
+  else if (sent) {
     content = (
       <>
         <h3 className="text-muted mb-1">
           <span role="img" aria-label="checkmark">
             ✔️
           </span>{' '}
-          Your email has been verified
+          Verification email has been sent. Please check your inbox
         </h3>
-        {returnHomeButton}
       </>
     );
-  } else {
+  } else if (error) {
     content = (
       <>
-        Oops, how did you end up here?
+        Oops, something went wrong. Please try again.
         <br /> {returnHomeButton}
       </>
     );
@@ -95,4 +89,4 @@ const VerifyEmail: React.FC = () => {
     </div>
   );
 };
-export default VerifyEmail;
+export default SendVerificationEmail;

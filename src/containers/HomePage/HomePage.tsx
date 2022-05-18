@@ -16,7 +16,6 @@ const HomePage: React.FC = () => {
     mapPointsState: { dataObj, mapPointsError, distanceBetween },
     uiState: { loading, theme, pageHasFocus },
     completeDataPointsState: { dataPoints, mostRecent, error, count },
-    userState: { user },
     remindersState: { allReminders },
     vehicles,
   } = useSelector(({ mapPointsState, uiState, completeDataPointsState, userState, remindersState, vehiclesState }: RootState) => ({
@@ -105,7 +104,7 @@ const HomePage: React.FC = () => {
           idx: idx.toString(),
         };
       }),
-    [currentVehiclesMemo, count, dataPoints, error, mostRecent, user]
+    [currentVehiclesMemo, count, dataPoints, error, mostRecent, vehicles]
   );
 
   const remindersToDisplay = useMemo(

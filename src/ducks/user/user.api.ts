@@ -1,6 +1,17 @@
 import http from '../../services/httpService';
+import { IUser } from './user.index';
 
 const apiEndpoint = '/auth';
+
+interface IRegisterBody extends Partial<IUser> {
+  password: string;
+  inviteToken?: string;
+}
+export const register = async (body: IRegisterBody) => {
+  const url = `${apiEndpoint}/register`;
+  const response = await http.post(url, { username: body.username, email: body.email, firstName: body.firstName, lastName: body.lastName, password: body.password, inviteToken: body.inviteToken });
+  return response;
+};
 
 export const login = async (email: string, password: string) => {
   const url = `${apiEndpoint}/login`;

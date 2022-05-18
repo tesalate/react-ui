@@ -73,6 +73,7 @@ export const initialState: State = {
     TeslaVehiclesLoading: [],
     SendingVerificationEmail: [],
     VerifyRequest: [],
+    RegisterUser: [],
   },
   theme: undefined,
   autoTheme: true,

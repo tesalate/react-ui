@@ -41,36 +41,38 @@ const CircleMap = (props: ICircleProps) => {
 
   const bounds: Array<[number, number]> = [];
 
-  const data = useMemo(() => {
-    return mapPoints.map((dataItem, k: number) => {
-      let { geoJSON = { coordinates: [] }, _id, supercharger, startDate, maxChargeRate, energyAdded } = dataItem;
-      let { coordinates } = geoJSON;
-      if (supercharger?.title && !supercharger?.title.toLowerCase().includes('supercharger')) supercharger.title += ' Supercharger';
-      const [a, b] = coordinates as [number, number];
-      if (a && b) {
-        bounds.push([b, a]);
-        return (
-          <Marker position={[b, a]} key={k}>
-            <Popup>
-              <p>
-                <b>{supercharger?.title}</b>
-              </p>
-              <p>
-                Date: <Moment format={'MM/DD/YYYY HH:mm:ss'}>{startDate}</Moment>
-              </p>
-              <p>Max Rate: {maxChargeRate}kW</p>
-              <p>Energy Added: {energyAdded}kWh</p>
-              <Link to={`/charge-sessions/${_id}`}>
-                <b>View Session</b>
-              </Link>
-            </Popup>
-          </Marker>
-        );
-      }
-      return;
-    });
+  const data = useMemo(
+    () =>
+      mapPoints.map((dataItem, k: number) => {
+        let { geoJSON = { coordinates: [] }, _id, supercharger, startDate, maxChargeRate, energyAdded } = dataItem;
+        let { coordinates } = geoJSON;
+        if (supercharger?.title && !supercharger?.title.toLowerCase().includes('supercharger')) supercharger.title += ' Supercharger';
+        const [a, b] = coordinates as [number, number];
+        if (a && b) {
+          bounds.push([b, a]);
+          return (
+            <Marker position={[b, a]} key={k}>
+              <Popup>
+                <p>
+                  <b>{supercharger?.title}</b>
+                </p>
+                <p>
+                  Date: <Moment format={'MM/DD/YYYY HH:mm:ss'}>{startDate}</Moment>
+                </p>
+                <p>Max Rate: {maxChargeRate}kW</p>
+                <p>Energy Added: {energyAdded}kWh</p>
+                <Link to={`/charge-sessions/${_id}`}>
+                  <b>View Session</b>
+                </Link>
+              </Popup>
+            </Marker>
+          );
+        }
+        return;
+      }),
     // eslint-disable-next-line
-  }, [mapPoints]);
+    [mapPoints]
+  );
 
   const _addQuery = useCallback(
     (a, b) => {

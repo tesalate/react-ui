@@ -39,7 +39,7 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     dispatch(teslaAccountActions.requestTeslaAccount());
-  }, []);
+  }, [dispatch]);
 
   const themeColor = useMemo(() => (theme === 'dark' ? 'dark' : 'outline-secondary'), [theme]);
 
