@@ -20,7 +20,7 @@ const SendVerificationEmail: React.FC = () => {
     if (!isVerified && !sent) {
       dispatch(userActions.requestVerificationEmail());
     }
-  }, [dispatch, isVerified]);
+  }, [dispatch, isVerified, sent]);
 
   const returnHomeButton = (
     <Button variant="outline-secondary" size="sm" as={Link} to={'/'} className="mt-2">
