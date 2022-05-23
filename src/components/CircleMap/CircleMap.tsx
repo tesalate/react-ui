@@ -68,7 +68,7 @@ const CircleMap = (props: ICircleProps) => {
             </Marker>
           );
         }
-        return;
+        return null;
       }),
     // eslint-disable-next-line
     [mapPoints]

@@ -9,7 +9,6 @@ const takeEvery: any = Eff.takeEvery;
 const loadingName = 'TeslaAccount';
 
 export function* fetchTeslaAccount() {
-  console.log('HMMMMM');
   try {
     const { error } = yield select(({ teslaAccountState }: RootState) => ({
       error: teslaAccountState.teslaAccountError,
@@ -17,7 +16,6 @@ export function* fetchTeslaAccount() {
     if (error) yield put(teslaAccountActions.setTeslaAccountError(false));
 
     yield put(uiActions.setComponentLoading(loadingName));
-    console.log('AFASFAFDSGSDGGD');
     const {
       data: {
         results: [account],

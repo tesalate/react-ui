@@ -64,7 +64,7 @@ const SignUpComp = () => {
       >
         <h1>Sign Up for {toTitleCase(config.appName)}</h1>
         <hr />
-        {errorMessage?.toLowerCase().includes('jwt must be provided') ? (
+        {errorMessage?.toLowerCase().includes('jwt must be provided') || errorMessage?.toLowerCase().includes('invite') ? (
           <>
             Sorry, {toTitleCase(config.appName)} is invite only right now.
             <br />
