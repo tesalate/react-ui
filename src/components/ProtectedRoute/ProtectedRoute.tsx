@@ -8,7 +8,7 @@ import { selectors as vehicleSelectors } from '../../ducks/vehicles/vehicles.ind
 import { actions as uiActions } from '../../ducks/ui/ui.index';
 
 const Toasts = lazy(() => import('../Toasts/Toasts'));
-const Socket = lazy(() => import('../Socket/Socket'));
+// const Socket = lazy(() => import('../Socket/Socket'));
 const SelectVehicleModal = lazy(() => import('../SelectVehicleModal/SelectVehicleModal'));
 const VerifyModal = lazy(() => import('../VerifyModal/VerifyModal'));
 const ErrorModal = lazy(() => import('../ErrorModal/ErrorModal'));
@@ -56,7 +56,7 @@ const ProtectedRoute = ({ children, ...rest }: any) => {
         loggedIn ? (
           <>
             <Toasts />
-            <Socket />
+            {/* <Socket /> */}
             <div style={{ zIndex: 999999999 }}>
               {showSelectVehicleModal && <SelectVehicleModal theme={theme} />}
               {showVerifyModal && <VerifyModal theme={theme} loading={loading.SendingVerificationEmail.length > 0} requestVerificationEmail={userActions.requestVerificationEmail} sent={sent} />}
