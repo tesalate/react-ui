@@ -24,7 +24,7 @@ export function* fetchMapPoints(action: any) {
       const {
         data: { results },
       } = yield call(getMapPoints, action.payload.filterBool, action.payload.vid, action.payload.km);
-      yield put(mapPointsActions.setMapPoints(results, action.payload.filterBool));
+      yield put(mapPointsActions.setMapPoints(results, action.payload.vid, action.payload.filterBool));
     }
   } catch (error) {
     console.log('FRIIIIIICK', error.message);

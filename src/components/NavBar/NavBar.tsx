@@ -36,7 +36,7 @@ const NavBar = () => {
     shallowEqual
   );
 
-  const doNotShowNav = useMemo(() => ['login', 'logout', 'verify-email', 'sign-up', 'password-reset'], []);
+  const doNotShowNav = useMemo(() => ['login', 'logout', 'verify-email', 'sign-up', 'password-reset', 'send-verification-email'], []);
 
   if (doNotShowNav.includes(location.pathname.split('/')?.[1])) return null;
 

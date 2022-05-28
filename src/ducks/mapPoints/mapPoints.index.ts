@@ -52,7 +52,7 @@ export enum ActionTypes {
 /* ===== ACTION_CREATORS ===== */
 export const actions = {
   requestMapPoints: (filterBool: boolean, vid: string, km?: number): Action => ({ type: ActionTypes.REQUEST_MAP_POINTS, payload: { filterBool, vid, km } }),
-  setMapPoints: (data: Array<any>, filterBool?: boolean): Action => ({ type: ActionTypes.SET_MAP_POINTS, payload: { data, filterBool } }),
+  setMapPoints: (data: Array<any>, vehicle: string, filterBool?: boolean): Action => ({ type: ActionTypes.SET_MAP_POINTS, payload: { data, filterBool, vehicle } }),
   setMapPointsLoading: (value: boolean): Action => ({ type: ActionTypes.SET_MAP_POINTS_LOADING, payload: value }),
   setMapPointsError: (value: boolean): Action => ({ type: ActionTypes.SET_MAP_POINTS_ERROR, payload: value }),
   socketUpdate: (value: Record<any, any>): Action => ({ type: ActionTypes.SOCKET_UPDATE, payload: value }),
@@ -83,7 +83,7 @@ const reducer = (state: State = initialState, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_MAP_POINTS:
       const key = action.payload.filterBool ? 'data' : 'allData';
-      return { ...state, [key]: { ...state[key], [action.payload?.data?.[0].vehicle]: action.payload.data } };
+      return { ...state, [key]: { ...state[key], [action.payload.vehicle]: action.payload.data } };
     case ActionTypes.SET_MAP_POINTS_ERROR:
       return { ...state, mapPointsError: action.payload };
     case ActionTypes.SET_MAP_POINTS_LOADING:
