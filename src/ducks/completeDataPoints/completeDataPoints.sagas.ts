@@ -119,7 +119,7 @@ export function* fetchHomePageData() {
         const {
           data: { results: mapPoints },
         } = yield call(getMapPoints, true, vehicle, km);
-        yield put(mapPointsActions.setMapPoints(mapPoints, true));
+        yield put(mapPointsActions.setMapPoints(mapPoints, vehicle, true));
       }
     }
   } catch (err) {

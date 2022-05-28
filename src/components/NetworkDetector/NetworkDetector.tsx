@@ -15,8 +15,7 @@ const NetworkDetector: React.FC = () => {
 
   useEffect(() => {
     const handleDisconnection = () => {
-      dispatch(uiActions.setIsConnected(true));
-      // dispatch(uiActions.setIsConnected(navigator.onLine));
+      dispatch(uiActions.setIsConnected(navigator.onLine));
     };
     window.addEventListener('offline', handleDisconnection);
     window.addEventListener('online', handleDisconnection);
