@@ -9,11 +9,16 @@ import { toTitleCase } from '../../utils/formatFunctions';
 import { actions as userActions } from '../../ducks/user/user.index';
 import { RootState } from '../../redux/reducers';
 import { isEmpty } from 'lodash';
+import jwt_decode from 'jwt-decode';
 
 const SignUpComp = () => {
   const dispatch = useDispatch();
   const { token: inviteToken }: { token: string } = useParams();
-
+  let email = undefined;
+  if (inviteToken) {
+    const { sub } = jwt_decode(inviteToken);
+    email = sub;
+  }
   const { loading, errorMessage, user } = useSelector(({ uiState, userState }: RootState) => ({
     loading: uiState.loading?.RegisterUser?.length > 0,
     errorMessage: userState.userRegisterError.message,
@@ -25,7 +30,7 @@ const SignUpComp = () => {
       username: '',
       firstName: '',
       lastName: '',
-      email: '',
+      email: email ?? '',
       password: '',
       confirmPassword: '',
       terms: false,
@@ -141,7 +146,7 @@ const SignUpComp = () => {
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   isInvalid={(formik.touched.email && !!formik.errors.email) || errorMessage?.toLowerCase().includes('email')}
-                  disabled={loading}
+                  disabled={loading || !!inviteToken}
                 />
 
                 <Form.Control.Feedback type="invalid">
