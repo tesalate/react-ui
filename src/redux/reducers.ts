@@ -26,12 +26,13 @@ export enum ActionTypes {
 localForage.config({
   name: process.env.REACT_APP_NAME + '_db',
   storeName: 'store',
+  version: 0.1,
 });
 
 const uiPersistConfig = {
   key: 'ui',
   storage: localForage,
-  blacklist: ['loading', 'isConnected', 'pageHasFocus', 'windowDimensions', 'isConnected'],
+  blacklist: ['loading', 'isConnected', 'pageHasFocus', 'windowDimensions', 'isConnected', 'uiError'],
 };
 
 const userPersistConfig = {
@@ -46,10 +47,22 @@ const completeDataPointsPersistConfig = {
   blacklist: ['completeDataPointsError', 'completeDataPointsLoading'],
 };
 
+const mapPointsPersistConfig = {
+  key: 'mapPoints',
+  storage: localForage,
+  blacklist: ['mapPointsError', 'mapPointsLoading'],
+};
+
+const statsPersistConfig = {
+  key: 'stats',
+  storage: localForage,
+  blacklist: ['statTypes', 'statsError'],
+};
+
 const rootPersistConfig = {
   key: 'root',
   storage: localForage,
-  blacklist: ['userState', 'uiState', 'toastsState', 'completeDataPointsState'],
+  blacklist: ['userState', 'uiState', 'toastsState', 'completeDataPointsState', 'mapPointsState', 'statsState'],
 };
 
 // export all reducers/state-pieces into a single reducer
@@ -57,7 +70,7 @@ const rootReducer = persistReducer(
   rootPersistConfig,
   combineReducers({
     uiState: persistReducer(uiPersistConfig, ui),
-    mapPointsState: mapPoints,
+    mapPointsState: persistReducer(mapPointsPersistConfig, mapPoints),
     driveSessionsState: driveSessions,
     chargeSessionsState: chargeSessions,
     completeDataPointsState: persistReducer(completeDataPointsPersistConfig, completeDataPoints),
@@ -65,7 +78,7 @@ const rootReducer = persistReducer(
     teslaAccountState: teslaAccount,
     recordsState: records,
     remindersState: reminders,
-    statsState: stats,
+    statsState: persistReducer(statsPersistConfig, stats),
     toastsState: toasts,
     vehiclesState: vehicles,
   })
