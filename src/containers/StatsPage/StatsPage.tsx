@@ -11,7 +11,7 @@ const Stats: React.FC = () => {
   const dispatch = useDispatch();
   const [vehicleStats, setVehicleStats] = useState<Array<IStatsObj>>([]);
   const [selectedStat, setSelectedStat] = useState<StatTypes>((sessionStorage.getItem('selectedStat') as StatTypes) ?? StatTypeArr[0]);
-  const [monthOrYear, setMonthOrYear] = useState<TimeFrameTypes>((sessionStorage.getItem('monthOrYearStat') as TimeFrameTypes) ?? 'month');
+  const [dayMonthOrYear, setDayMonthOrYear] = useState<TimeFrameTypes>((sessionStorage.getItem('monthOrYearStat') as TimeFrameTypes) ?? 'month');
 
   const {
     statsState: { stats },
@@ -44,16 +44,7 @@ const Stats: React.FC = () => {
   }, [dispatch, currentVehicles, stats]);
 
   const foundStats = useMemo(() => vehicleStats.find((el: IStatsObj) => el.systemKey === selectedStat), [vehicleStats, selectedStat]) as IStatsObj;
-
-  const groups = useMemo(() => {
-    if (!foundStats) return {};
-    return foundStats['data'].reduce((acc: any, curr: any) => {
-      const group = acc[curr._id.year] || [null, null, null, null, null, null, null, null, null, null, null, null];
-      group[curr._id.month - 1] = curr.value;
-      acc[curr._id.year] = group;
-      return acc;
-    }, {});
-  }, [foundStats]);
+  // const monthlyStats = useMemo(() => statsSelectors.getMonthlyStats(foundStats), [foundStats]);
 
   // move these to a more general location for other files to use
   const backgroundColor = useMemo(() => ['rgba(54, 162, 235, 0.4)', 'rgba(153, 102, 255, 0.4)', 'rgba(75, 192, 192, 0.4)', 'rgba(201, 203, 207, 0.4)', 'rgba(255, 99, 132, 0.4)', 'rgba(255, 159, 64, 0.4)', 'rgba(255, 205, 86, 0.4)'], []);
@@ -63,29 +54,16 @@ const Stats: React.FC = () => {
 
   const shapedData = useMemo(() => {
     if (foundStats)
-      switch (monthOrYear) {
+      switch (dayMonthOrYear) {
         case 'year':
-          return {
-            labels: Object.keys(groups),
-            datasets: [
-              Object.keys(groups).reduce(
-                (acc, curr) => {
-                  acc['data'].push(groups[curr].reduce((a: number, b: number) => a + b, 0));
-                  return acc;
-                },
-                { label: foundStats['displayName'], data: [] as any, borderWidth: 1, backgroundColor: backgroundColor[0], borderColor: borderColor[0] }
-              ),
-            ],
-          };
-
+          return statsSelectors.getYearlyStats(foundStats);
+        case 'month':
+          return statsSelectors.getMonthlyStats(foundStats, backgroundColor, borderColor);
         default:
-          return {
-            labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((el: number) => new Date(2020, el, 1).toLocaleString('en-us', { month: 'long' })),
-            datasets: Object.keys(groups).map((el: any, idx: number) => ({ label: el, data: groups[el], borderWidth: 1, backgroundColor: backgroundColor[idx], borderColor: borderColor[idx] })),
-          };
+          return statsSelectors.getDailyStats(foundStats);
       }
     return {};
-  }, [groups, backgroundColor, borderColor, monthOrYear, foundStats]);
+  }, [backgroundColor, borderColor, dayMonthOrYear, foundStats]);
 
   return (
     <Row>
@@ -122,15 +100,15 @@ const Stats: React.FC = () => {
               {TimeFrameArr.map((el: TimeFrameTypes) => {
                 return (
                   <Button
-                    active={monthOrYear === el}
+                    active={dayMonthOrYear === el}
                     key={el}
                     id={el}
                     className="p-0"
                     size="sm"
                     variant={theme === 'dark' ? 'dark' : 'outline-secondary'}
                     onClick={() => {
-                      setMonthOrYear(el as TimeFrameTypes);
-                      sessionStorage.setItem('monthOrYearStat', el);
+                      setDayMonthOrYear(el as TimeFrameTypes);
+                      sessionStorage.setItem('dayMonthOrYearStat', el);
                     }}
                   >
                     {titleCase(`by ${el}`)}{' '}

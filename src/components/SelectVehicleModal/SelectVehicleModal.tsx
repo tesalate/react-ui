@@ -44,7 +44,11 @@ const SelectVehicleModal: React.FC<IModalProps> = ({ theme }) => {
             >
               <option value={''}>Select a vehicle...</option>
               {vehicles.map((vehicle: IVehicle) => {
-                return <option value={vehicle._id}>{vehicle.display_name}</option>;
+                return (
+                  <option value={vehicle._id} key={vehicle._id}>
+                    {vehicle.display_name}
+                  </option>
+                );
               })}
             </Form.Control>
             <Row className="d-flex justify-space-between m-0 p-0">
