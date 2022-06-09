@@ -24,8 +24,8 @@ export function* fetchStats() {
       if (isConnected || isEmpty(stats[vehicle])) {
         for (const stat of statTypes) {
           const { data } = yield call(getAStat, vehicle, stat);
-          data['vid'] = vehicle;
-          yield put(statsActions.setStats(pick(data, ['vid', 'data', 'systemKey', 'displayName', 'displayOrder', 'unit'])));
+          data['vehicle'] = vehicle;
+          yield put(statsActions.setStats(pick(data, ['vehicle', 'results', 'systemKey', 'displayName', 'displayOrder', 'unit'])));
         }
       }
     }
