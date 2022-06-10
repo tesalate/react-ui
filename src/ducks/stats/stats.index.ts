@@ -20,6 +20,10 @@ export interface IStatsObj {
   unit: string;
 }
 
+/* ======= GLOBAL VARS ====== */
+// create an array from 0 -> 11 to represent the month - 1
+const monthArr = Array.from({ length: 12 }, (_v, i) => i);
+
 /* ===== INTERFACE_DEFINITION =====*/
 export interface State {
   statTypes: Array<StatTypes>;
@@ -57,14 +61,8 @@ export const selectors = {
   getStatsToDisplay: (stats: Array<IStatsObj>, vehicle: string) => stats.filter((el: IStatsObj) => el.vehicle === vehicle).sort((a, b) => a.displayOrder - b.displayOrder),
   getDailyStats: (stats: IStatsObj) => {
     return {
-      // labels: stats.results.map((metric: resultMetric) => {
-      //   const {
-      //     _id: { day, month, year },
-      //   } = metric;
-      //   return `${day}/${month}/${year}`;
-      // }),
       labels: [Array.from({ length: 31 }, (_, i) => i + 1)],
-      datasets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((el: number) => {
+      datasets: monthArr.map((el: number) => {
         return {
           label: new Date(2020, el, 1).toLocaleString('en-us', { month: 'long' }),
           data: stats.results.filter((metric) => metric._id.month === el + 1).map((metric: resultMetric) => metric.value),
@@ -82,16 +80,28 @@ export const selectors = {
       acc[year] = { ...acc[year], [month]: acc?.[year]?.[month] ? (acc[year][month] += value) : value };
       return acc;
     }, {});
-
     return {
-      labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((el: number) => new Date(2020, el, 1).toLocaleString('en-us', { month: 'long' })),
-      datasets: Object.keys(data).map((key, idx) => ({
-        label: key,
-        data: Object.values(data[key]),
-        borderWidth: 1,
-        backgroundColor: backgroundColor[idx],
-        borderColor: borderColor[idx],
-      })),
+      labels: monthArr.map((el: number) => new Date(2020, el, 1).toLocaleString('en-us', { month: 'long' })),
+      datasets: Object.keys(data).map((key, idx) => {
+        // create a placeholder array that looks like [null, null, null, ...]
+        // these place holders are important as they are needed to align the right data
+        // to the right month
+        const placeholderArr: (null | number)[] = monthArr.map(() => null);
+        return {
+          label: key,
+          data: Object.keys(data[key]).reduce((acc: any, curr) => {
+            // target the correct index in the placeholder array and replace null with
+            // correct data [null, null, 19.2, null, null, 22.98, ...]
+            // chartjs will then be able to line up the data with the right month
+            // e.g. 19.2 is in index 2 which is march (2+1=3) and 22.98 -> june
+            acc[parseInt(curr) - 1] = data[key][curr];
+            return acc;
+          }, placeholderArr),
+          borderWidth: 1,
+          backgroundColor: backgroundColor[idx],
+          borderColor: borderColor[idx],
+        };
+      }),
     };
   },
   getYearlyStats: (stats: IStatsObj) => {
