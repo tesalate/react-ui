@@ -3,6 +3,7 @@ import MasterTable from '../../../components/MasterTable/MasterTable';
 import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { actions as chargeSessionActions } from '../../../ducks/chargeSessions/chargeSessions.index';
+import { timeConversion } from '../../../utils/convert';
 
 interface ChargeSessionsTableProps {
   sessions: Array<any>;
@@ -28,7 +29,7 @@ const ChargeSessionsTable: React.FC<ChargeSessionsTableProps> = ({ sessions, loa
       },
       {
         Header: 'Date/Time',
-        accessor: 'startDate',
+        accessor: 'createdAt',
         Cell: (data: any) => <Moment format={'MM/DD/YYYY HH:mm:ss'}>{data.value}</Moment>,
         sortType: 'basic',
       },
@@ -55,6 +56,32 @@ const ChargeSessionsTable: React.FC<ChargeSessionsTableProps> = ({ sessions, loa
         sortType: 'basic',
       },
       {
+        Header: 'Starting %',
+        accessor: 'startingBatteryLevel',
+        Cell: (data: any) => {
+          return data.value + '%';
+        },
+        sortType: 'basic',
+      },
+      {
+        Header: 'Ending %',
+        accessor: 'endingBatteryLevel',
+        Cell: (data: any) => {
+          return data.value + '%';
+        },
+        sortType: 'basic',
+      },
+      // {
+      //   Header: '% Added',
+      //   accessor: (data: any) => ({ starting: data.startingBatteryLevel, ending: data.endingBatteryLevel, total: data.endingBatteryLevel - data.startingBatteryLevel }),
+      //   Cell: (data: any) => {
+      //     return data.value.total + '%';
+      //   },
+      //   sortType: (a: any, b: any) => {
+      //     return b.values.Duration.total - a.values.Duration.total;
+      //   },
+      // },
+      {
         Header: 'Energy Added',
         accessor: 'energyAdded',
         Cell: (data: any) => {
@@ -64,13 +91,11 @@ const ChargeSessionsTable: React.FC<ChargeSessionsTableProps> = ({ sessions, loa
       },
       {
         Header: 'Duration',
-        accessor: (data: any) => ({ startDate: data.startDate, endDate: data.endDate, ms: new Date(data.endDate).getTime() - new Date(data.startDate).getTime() }),
+        accessor: 'duration',
         Cell: (data: any) => {
-          return <Moment duration={data.value.startDate} date={data.value.endDate} />;
+          return timeConversion(data.value);
         },
-        sortType: (a: any, b: any) => {
-          return b.values.Duration.ms - a.values.Duration.ms;
-        },
+        sortType: 'basic',
       },
     ],
     []

@@ -11,34 +11,36 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 /* ========= COMPONENT IMPORTS ========= */
+import NetworkDetector from '../../components/NetworkDetector/NetworkDetector';
 import AuthWrapper from '../../components/AuthWrapper/AuthWrapper';
+import SignUpComp from '../../components/SignUpComp/SignUp';
 import { useThemeDetector } from '../../utils/customHooks';
+import Socket from '../../components/Socket/Socket';
+import Footer from '../../components/Footer/Footer';
+import NavBar from '../../components/NavBar/NavBar';
+import config from '../../config/config';
+import { toTitleCase } from '../../utils/formatFunctions';
 
 /* ========= REDUX IMPORTS ========= */
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/reducers';
 import { actions as uiActions } from '../../ducks/ui/ui.index';
 import { useWindowSize } from '../../utils/customHooks';
-import NetworkDetector from '../../components/NetworkDetector/NetworkDetector';
-import Footer from '../../components/Footer/Footer';
-import NavBar from '../../components/NavBar/NavBar';
-import config from '../../config/config';
-import { toTitleCase } from '../../utils/formatFunctions';
-import SignUpComp from '../../components/SignUpComp/SignUp';
 
 /* ======== LAZY IMPORTS ========= */
-const HomePage = lazy(() => import('../HomePage/HomePage'));
-const ProtectedRoute = lazy(() => import('../../components/ProtectedRoute/ProtectedRoute'));
-const LoginComp = lazy(() => import('../../components/LoginComp/LoginComp'));
-const LogOutComp = lazy(() => import('../../components/LogOutComp/LogOutComp'));
-const Records = lazy(() => import('../Records/Records'));
-const ChargeSessions = lazy(() => import('../ChargeSessions/ChargeSessions'));
-const DriveSessions = lazy(() => import('../DriveSessions/DriveSessions'));
-const MapPage = lazy(() => import('../MapPage/MapPage'));
-const Stats = lazy(() => import('../StatsPage/StatsPage'));
-const Settings = lazy(() => import('../Settings/Settings'));
-const VerifyEmail = lazy(() => import('../VerifyEmail/VerifyEmail'));
 const SendVerificationEmail = lazy(() => import('../SendVerificationEmail/SendVerificationEmail'));
+const ProtectedRoute = lazy(() => import('../../components/ProtectedRoute/ProtectedRoute'));
+const LogOutComp = lazy(() => import('../../components/LogOutComp/LogOutComp'));
+const ChargeSessions = lazy(() => import('../ChargeSessions/ChargeSessions'));
+const LoginComp = lazy(() => import('../../components/LoginComp/LoginComp'));
+const DriveSessions = lazy(() => import('../DriveSessions/DriveSessions'));
+const VerifyEmail = lazy(() => import('../VerifyEmail/VerifyEmail'));
+const Settings = lazy(() => import('../Settings/Settings'));
+const HomePage = lazy(() => import('../HomePage/HomePage'));
+const LogsPage = lazy(() => import('../LogbookPage/LogbookPage'));
+const Stats = lazy(() => import('../StatsPage/StatsPage'));
+const Records = lazy(() => import('../Records/Records'));
+const MapPage = lazy(() => import('../MapPage/MapPage'));
 
 function ErrorFallback({ error }: { error: { message: string } }) {
   return (
@@ -112,6 +114,7 @@ const App: React.FC = () => {
           // reset the state of your app so the error doesn't happen again
         }}
       >
+        <Socket />
         <Container fluid style={{ ...containerStyling }} className="px-xs-1 px-sm-2 px-md-3 px-lg-4">
           <div style={{ ...wrapperStyling }}>
             <NetworkDetector />
@@ -161,6 +164,9 @@ const App: React.FC = () => {
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/map">
                   <MapPage />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/logs/:date?">
+                  <LogsPage />
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/settings/:tab?">
                   <Settings />

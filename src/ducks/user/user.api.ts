@@ -50,7 +50,7 @@ export const updateMe = async (obj: any) => {
 };
 
 export const teslaLogin = async ({ userId, username, password, refreshToken }: { userId: string; username?: string; password?: string; refreshToken?: string }) => {
-  const url = `/tesla/login`;
+  const url = `/tesla-account/login`;
   const response = await http.post(url, { userId, username, password, refreshToken });
   return response;
 };

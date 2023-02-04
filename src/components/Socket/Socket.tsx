@@ -1,30 +1,43 @@
 /* ========= PACKAGE IMPORTS ========= */
-import React from 'react';
+import React, { Dispatch, useEffect, useLayoutEffect, useRef } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 /* ========= REDUX IMPORTS ========= */
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { actions as uiActions } from '../../ducks/ui/ui.index';
-import { actions as mapPointActions } from '../../ducks/mapPoints/mapPoints.index';
 import { actions as chargeSessionActions } from '../../ducks/chargeSessions/chargeSessions.index';
 import { actions as driveSessionActions } from '../../ducks/driveSessions/driveSessions.index';
 import { actions as completeDataPointActions } from '../../ducks/completeDataPoints/completeDataPoints.index';
 import { actions as toastActions } from '../../ducks/toasts/toasts.index';
+import { RootState } from '../../redux/reducers';
 
-const Socket: React.FC = () => {
-  let client: W3CWebSocket;
-  const dispatch = useDispatch();
+const socketReconnect = 5000;
 
+const connect = (client: React.MutableRefObject<W3CWebSocket | null>, dispatch: Dispatch<any>) => {
   const url = process.env.REACT_APP_API_URL as string;
   const socketUrl = url.substring(url.lastIndexOf('/') + 1);
-  client = new W3CWebSocket(`${process.env.NODE_ENV === 'production' ? 'wss' : 'ws'}://${socketUrl}/socket`);
-  client.onopen = () => {
-    // console.log(`WebSocket Client Connected`, client);
+  client.current = new W3CWebSocket(`${process.env.NODE_ENV === 'production' ? 'wss' : 'ws'}://${socketUrl}/socket`);
+
+  if (!client.current) return;
+
+  dispatch(uiActions.setIsSocketConnected(true));
+
+  client.current.onclose = function (e) {
+    console.log(`Socket is closed. Reconnect will be attempted in ${socketReconnect / 1000} second.`, e.reason);
+    setTimeout(function () {
+      connect(client, dispatch);
+    }, socketReconnect);
   };
-  client.onmessage = (message) => {
+
+  client.current.onerror = function (err) {
+    console.error('Socket encountered error: ', err.message, 'Closing socket');
+    client?.current?.close();
+  };
+
+  client.current.onmessage = (message) => {
     const data = JSON.parse(message.data as string);
-    dispatch(uiActions.setLastRefresh());
-    if (data?.action === 'insert' && data.type.includes('sessions')) {
+
+    if (data?.action === 'insert' && ['charge', 'drive', 'sleep', 'sentry'].includes(data.type)) {
       dispatch(
         toastActions.addToasts({
           _id: data._id,
@@ -34,24 +47,48 @@ const Socket: React.FC = () => {
         })
       );
     }
-    switch (data.type) {
-      case 'charge-sessions':
-        dispatch(chargeSessionActions.socketUpdate(data));
+    switch (data.collection) {
+      case 'sessions':
+        if (data.type === 'charge') dispatch(chargeSessionActions.socketUpdate(data));
+        if (data.type === 'drive') dispatch(driveSessionActions.socketUpdate(data));
         break;
-      case 'drive-sessions':
-        if (data.action === 'insert') {
-        }
-        dispatch(driveSessionActions.socketUpdate(data));
-        break;
-      case 'completevehicledatapoints':
+      case 'vehicledata':
+        dispatch(uiActions.setLastRefresh());
+
         dispatch(completeDataPointActions.socketUpdate(data));
         dispatch(completeDataPointActions.setCompleteDataPointCount(data.vehicle, data.count));
-        dispatch(mapPointActions.socketUpdate(data));
+        // dispatch(mapPointActions.socketUpdate(data));
         break;
       default:
         break;
     }
   };
+};
+
+const Socket: React.FC = () => {
+  const dispatch = useDispatch();
+  const { loggedIn, liveUpdates } = useSelector(({ userState, uiState }: RootState) => ({
+    loggedIn: userState.loggedIn,
+    liveUpdates: uiState.liveUpdates,
+  }));
+  let client = useRef<W3CWebSocket | null>(null);
+
+  useEffect(() => {
+    if (!liveUpdates) {
+      client?.current?.close();
+      client.current = null;
+      dispatch(uiActions.setIsSocketConnected(false));
+      return;
+    }
+
+    connect(client, dispatch);
+  }, [dispatch, loggedIn, liveUpdates]);
+
+  useLayoutEffect(() => {
+    client?.current?.close();
+    client.current = null;
+    dispatch(uiActions.setIsSocketConnected(false));
+  }, [dispatch, client]);
   return null;
 };
 

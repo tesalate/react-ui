@@ -104,7 +104,7 @@ const reducer = (state: State = initialState, action: Action) => {
       const updatedMapPoint: IMapPoint = {
         ...state.allData[action.payload.vehicle][index],
         dataPoints: [{ drive_state: { latitude: latitude, longitude: longitude, heading: heading }, _id: state.allData[action.payload.vehicle][index]?._id ?? action.payload._id }],
-        latLongString: state.allData[action.payload.vehicle][index]?.latLongString ?? jsonMapPoint,
+        // latLongString: state.allData[action.payload.vehicle][index]?.latLongString ?? jsonMapPoint,
         lastModified: new Date(timestamp),
         createdAt: state.allData[action.payload.vehicle][index]?.createdAt ?? new Date(timestamp),
         geoJSON: state.allData[action.payload.vehicle][index]?.geoJSON ?? {

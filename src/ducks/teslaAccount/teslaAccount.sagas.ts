@@ -1,6 +1,6 @@
 import { put, call, select } from 'redux-saga/effects';
 import * as Eff from 'redux-saga/effects';
-import { getTeslaAccount } from './teslaAccount.api';
+import { getTeslaAccount, refreshTeslaAccount } from './teslaAccount.api';
 import { actions as teslaAccountActions, ActionTypes as teslaAccountTypes } from './teslaAccount.index';
 import { actions as uiActions } from '../ui/ui.index';
 import { RootState } from '../../redux/reducers';
@@ -35,7 +35,33 @@ export function* fetchTeslaAccount() {
   }
 }
 
+export function* fetchRefreshTeslaAccount() {
+  const loading = 'RefreshingAccount';
+  try {
+    const { error } = yield select(({ teslaAccountState }: RootState) => ({
+      error: teslaAccountState.teslaAccountError,
+    }));
+    if (error) yield put(teslaAccountActions.setTeslaAccountError(false));
+
+    yield put(uiActions.setComponentLoading(loading));
+    const {
+      data: { results: account },
+    } = yield call(refreshTeslaAccount);
+    yield put(teslaAccountActions.setTeslaAccount(account));
+  } catch (error) {
+    // handle ui effects
+    yield put(teslaAccountActions.setTeslaAccountError(true));
+    // console.log("FIRCKIN ERROR", error)
+
+    // // send error report
+    // const entireState = yield select();
+    // yield put(errorActions.raiseError({error, entireState}));
+  } finally {
+    yield put(uiActions.removeComponentLoading(loading));
+  }
+}
+
 // watcher saga
 export default function teslaAccountSagas() {
-  return [takeEvery(teslaAccountTypes.REQUEST_TESLA_ACCOUNT, fetchTeslaAccount)];
+  return [takeEvery(teslaAccountTypes.REQUEST_TESLA_ACCOUNT, fetchTeslaAccount), takeEvery(teslaAccountTypes.REFRESH_TESLA_ACCOUNT, fetchRefreshTeslaAccount)];
 }

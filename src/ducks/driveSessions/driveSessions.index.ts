@@ -36,6 +36,7 @@ export interface State {
   pageSize: number;
   totalPages: number;
   sortBy: { id: string; desc: boolean }[];
+  sortedIds: string[];
 }
 
 export interface Action {
@@ -53,7 +54,8 @@ export const initialState: State = {
   pageIndex: 0,
   pageSize: 14,
   totalPages: 0,
-  sortBy: [{ id: 'startDate', desc: true }],
+  sortBy: [{ id: 'createdAt', desc: true }],
+  sortedIds: [],
 };
 
 /* ===== TYPES ===== */
@@ -75,7 +77,7 @@ export enum ActionTypes {
 export const actions = {
   requestDriveSessions: (value: driveSessionQuery): Action => ({ type: ActionTypes.REQUEST_DRIVE_SESSIONS, payload: value }),
   requestSessionById: (id: string): Action => ({ type: ActionTypes.REQUEST_DRIVE_SESSION_BY_ID, payload: { id } }),
-  setDriveSessions: (value: Array<any>): Action => ({ type: ActionTypes.SET_DRIVE_SESSIONS, payload: value }),
+  setDriveSessions: (vehicle: string, sessions: Array<any>): Action => ({ type: ActionTypes.SET_DRIVE_SESSIONS, payload: { vehicle, sessions } }),
   setDriveSessionById: (value: Record<any, any>): Action => ({ type: ActionTypes.SET_DRIVE_SESSION_BY_ID, payload: value }),
   setSelectedSession: (value: string): Action => ({ type: ActionTypes.SET_SELECTED_SESSION, payload: value }),
   setDriveSessionsError: (value: boolean): Action => ({ type: ActionTypes.SET_DRIVE_SESSIONS_ERROR, payload: value }),
@@ -101,7 +103,7 @@ export const selectors = {
 const reducer = (state: State = initialState, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_DRIVE_SESSIONS:
-      return { ...state, sessions: { ...state.sessions, [action.payload?.[0].vehicle]: action.payload } };
+      return { ...state, sessions: { ...state.sessions, [action.payload.vehicle]: action.payload.sessions } };
     case ActionTypes.SET_SELECTED_SESSION:
       return { ...state, selectedSession: action.payload };
     case ActionTypes.SET_DRIVE_SESSION_BY_ID:
@@ -125,7 +127,7 @@ const reducer = (state: State = initialState, action: Action) => {
     case ActionTypes.SOCKET_UPDATE: {
       let sess = state.sessions[action.payload.vehicle] ?? [];
       const index = sess.findIndex((e: IDriveSession) => e._id === action.payload._id);
-      const updatedSession = pick(action.payload, ['_id', 'startDate', 'endDate', 'distance', 'maxRegen', 'maxPower', 'maxSpeed']);
+      const updatedSession = pick(action.payload, ['_id', 'sessionData', 'metadata', 'graphData']);
 
       if (index === -1) {
         sess = [...sess, updatedSession];
@@ -137,7 +139,7 @@ const reducer = (state: State = initialState, action: Action) => {
         sessions: { ...state.sessions, [action.payload.vehicle]: sess.map((s: IDriveSession) => s) },
         sessionData: {
           ...state.sessionData,
-          [action.payload._id]: action.payload.aggregateData,
+          [action.payload._id]: action.payload,
         },
       };
     }

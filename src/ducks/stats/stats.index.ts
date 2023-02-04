@@ -93,8 +93,8 @@ export const selectors = {
             // target the correct index in the placeholder array and replace null with
             // correct data [null, null, 19.2, null, null, 22.98, ...]
             // chartjs will then be able to line up the data with the right month
-            // e.g. 19.2 is in index 2 which is march (2+1=3) and 22.98 -> june
-            acc[parseInt(curr) - 1] = data[key][curr];
+            // e.g. 19.2 is in index 2 which is march (index 2+1=3) and 22.98 -> june
+            acc[parseInt(curr) - 1] = data[key][curr] ? data[key][curr] : isNaN(data[key][parseInt(curr) - 1]) ? null : 0;
             return acc;
           }, placeholderArr),
           borderWidth: 1,

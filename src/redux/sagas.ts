@@ -2,6 +2,7 @@ import { all } from 'redux-saga/effects';
 
 import uiSagas from '../ducks/ui/ui.sagas';
 import mapPointsSagas from '../ducks/mapPoints/mapPoints.sagas';
+import sessionsSagas from '../ducks/sessions/sessions.sagas';
 import driveSessionsSagas from '../ducks/driveSessions/driveSessions.sagas';
 import chargeSessionsSagas from '../ducks/chargeSessions/chargeSessions.sagas';
 import completeDataPointsSagas from '../ducks/completeDataPoints/completeDataPoints.sagas';
@@ -17,6 +18,7 @@ export default function* rootSaga() {
   yield all([
     ...uiSagas(),
     ...mapPointsSagas(),
+    ...sessionsSagas(),
     ...driveSessionsSagas(),
     ...chargeSessionsSagas(),
     ...completeDataPointsSagas(),

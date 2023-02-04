@@ -20,10 +20,11 @@ export function* fetchDriveSessions(action: any) {
     yield put(uiActions.setComponentLoading('DriveSessions'));
     if (isConnected || sessions.length === 0) {
       const {
-        data: { results, totalPages },
+        data: { results, totalPages, sortedIds },
       } = yield call(getDriveData, action.payload);
       yield put(driveSessionActions.setPageOption('totalPages', totalPages));
-      yield put(driveSessionActions.setDriveSessions(results));
+      yield put(driveSessionActions.setPageOption('sortedIds', sortedIds));
+      yield put(driveSessionActions.setDriveSessions(action.payload.vehicle, results));
     }
   } catch (error) {
     // handle ui effects
@@ -52,7 +53,7 @@ export function* fetchDriveSessionById(action: any) {
     yield put(uiActions.setComponentLoading('SingleDriveSession'));
     if (isConnected || isEmpty(sessionData[action.payload.id])) {
       const { data } = yield call(getDriveDataById, { id: action.payload.id });
-      yield put(driveSessionActions.setDriveSessionById(data));
+      yield put(driveSessionActions.setDriveSessionById(data.result));
     }
   } catch (error) {
     // handle ui effects

@@ -10,13 +10,14 @@ import { useParams } from 'react-router-dom';
 import SessionNavigation from '../../components/SessionNavigation/SessionNavigation';
 import { SessionRouteParams } from '../types';
 import { objArrToSortByString } from '../../utils/convert';
+import { SessionType } from '../../ducks/sessions/sessions.index';
 
 const DriveSessions: React.FC = () => {
   const dispatch = useDispatch();
   let { id }: SessionRouteParams = useParams();
 
   const {
-    driveSessionsState: { sessionsObj, pageSizeFromState, pageIndexFromState, sessionData, sortBy, error, singleSessionErrors, totalPages },
+    driveSessionsState: { sessionsObj, pageSizeFromState, pageIndexFromState, sessionData, sortBy, error, singleSessionErrors, totalPages, sortedIds },
     vehicles,
     uiState: { loading, theme, pageHasFocus },
     isConnected,
@@ -31,6 +32,7 @@ const DriveSessions: React.FC = () => {
       sortBy: driveSessionsState.sortBy,
       singleSessionErrors: driveSessionsState.singleDriveSessionsError,
       totalPages: driveSessionsState.totalPages,
+      sortedIds: driveSessionsState.sortedIds,
     },
     uiState: {
       loading: uiState.loading,
@@ -74,7 +76,7 @@ const DriveSessions: React.FC = () => {
 
   return (
     <div style={{ touchAction: 'pan-y' }}>
-      <SessionNavigation current={id} sessionType={'drive'} sessionIds={sessions.map((el: any) => ({ _id: el._id, vid: el.vid }))} theme={theme === 'light' ? 'outline-dark' : 'outline-light'} />
+      <SessionNavigation current={id} sessionType={SessionType['drive']} sessionIds={sortedIds} theme={theme === 'light' ? 'outline-dark' : 'outline-light'} />
       {id ? (
         <SelectedDriveSession id={id} data={selectedSession} theme={theme ?? undefined} loading={loading['DriveSessions'].length > 0} error={error} errors={singleSessionErrors} isConnected={isConnected} />
       ) : (

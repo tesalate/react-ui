@@ -18,12 +18,12 @@ interface TeslaAdminProps {
 const TeslaAdmin: React.FC<TeslaAdminProps> = ({ account }) => {
   const dispatch = useDispatch();
 
-  const { vehicles, teslaAccountLinked, email, theme, vehiclesUpdating, vehicleLoading } = useSelector(({ teslaAccountState, uiState, vehiclesState }: RootState) => ({
+  const { vehicles, teslaAccountLinked, email, theme, refreshingAccount, vehicleLoading } = useSelector(({ teslaAccountState, uiState, vehiclesState }: RootState) => ({
     vehicles: vehiclesState.vehicles,
     teslaAccountLinked: teslaAccountState.account?.linked ?? false,
     email: teslaAccountState.account?.email ?? '',
     theme: uiState.theme,
-    vehiclesUpdating: uiState.loading['VehiclesUpdating'],
+    refreshingAccount: uiState.loading['RefreshingAccount'].length > 0,
     vehicleLoading: uiState.loading['TeslaVehiclesLoading'].length > 0,
   }));
 
@@ -65,12 +65,12 @@ const TeslaAdmin: React.FC<TeslaAdminProps> = ({ account }) => {
             <small>Enabling data collections allows us to gather information on your vehicle{length > 1 && 's'} to display in this application</small>
           </p>
         )}
-        {vehicleLoading ? (
+        {refreshingAccount ? (
           <LoadingVehicles />
         ) : (
           vehiclesInTeslaAccount.map((el: any, idx: number) => {
             const collectData = el['collectData'];
-            const loading = vehiclesUpdating.includes(el._id);
+
             return (
               <Col key={idx} sm={12} style={{ border: 'var(--main-border-style)', position: 'relative', overflow: 'hidden' }} className="rounded py-2 mb-2 px-3">
                 {
@@ -84,7 +84,7 @@ const TeslaAdmin: React.FC<TeslaAdminProps> = ({ account }) => {
                     className="w-100 h-100 p-0 m-0"
                   />
                 }
-                {loading && (
+                {refreshingAccount && (
                   <div
                     className="h-100 w-100 d-flex justify-content-center align-items-center m-0 rounded"
                     style={{
@@ -106,7 +106,15 @@ const TeslaAdmin: React.FC<TeslaAdminProps> = ({ account }) => {
                       const cardInfo = {
                         text:
                           key === 'collectData' ? (
-                            <Switch onChange={() => dispatch(vehiclesActions.updateVehicle(el._id, { collectData: !collectData }))} checked={el[key]} height={20} width={40} disabled={loading} offColor="#BEBEBE" onColor="#198754" />
+                            <Switch
+                              onChange={() => dispatch(vehiclesActions.updateVehicle(el._id, { collectData: !collectData }))}
+                              checked={el[key]}
+                              height={20}
+                              width={40}
+                              disabled={refreshingAccount}
+                              offColor="#BEBEBE"
+                              onColor="#198754"
+                            />
                           ) : (
                             el[key]
                           ),
@@ -144,14 +152,16 @@ const TeslaAdmin: React.FC<TeslaAdminProps> = ({ account }) => {
               Email: <strong>{email}</strong>
             </p>
           </Col>
+          <Col>
+            <Button disabled={vehicleLoading} size={'sm'} variant="outline-secondary" className="float-end" style={{ minWidth: '126px' }} onClick={() => dispatch(teslaAccountActions.refreshTeslaAccount())}>
+              {vehicleLoading ? <Spinner size="sm" as="span" animation="border" role="status" aria-hidden="true" /> : 'Refresh Tesla Account'}
+            </Button>
+          </Col>
         </Row>
         <Row className="mb-5">
           <Col>
             <span className="d-flex justify-content-between">
               <h4>Vehicles</h4>
-              <Button disabled={vehicleLoading} size={'sm'} variant="outline-secondary" className="float-end" style={{ minWidth: '126px' }} onClick={() => dispatch(teslaAccountActions.refreshTeslaVehicles())}>
-                {vehicleLoading ? <Spinner size="sm" as="span" animation="border" role="status" aria-hidden="true" /> : 'Refresh Vehicles'}
-              </Button>
             </span>
             <hr />
             <Row>

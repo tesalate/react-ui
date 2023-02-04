@@ -8,6 +8,7 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { SessionRouteParams } from '../types';
 import { objArrToSortByString } from '../../utils/convert';
+import { SessionType } from '../../ducks/sessions/sessions.index';
 
 const CircleMap = lazy(() => import('../../components/CircleMap/CircleMap'));
 const SessionNavigation = lazy(() => import('../../components/SessionNavigation/SessionNavigation'));
@@ -19,7 +20,7 @@ const ChargeSessions: React.FC = () => {
   let { id }: SessionRouteParams = useParams();
 
   const {
-    chargeSessionsState: { sessionsObj, pageSizeFromState, pageIndexFromState, sessionData, sortBy, error, singleSessionErrors, totalPages },
+    chargeSessionsState: { sessionsObj, pageSizeFromState, pageIndexFromState, sessionData, sortBy, error, singleSessionErrors, totalPages, sortedIds },
     vehicles,
     uiState: {
       loading,
@@ -39,6 +40,7 @@ const ChargeSessions: React.FC = () => {
       sortBy: chargeSessionsState.sortBy,
       singleSessionErrors: chargeSessionsState.singleChargeSessionsError,
       totalPages: chargeSessionsState.totalPages,
+      sortedIds: chargeSessionsState.sortedIds,
     },
     uiState: {
       loading: uiState.loading,
@@ -60,7 +62,7 @@ const ChargeSessions: React.FC = () => {
             vehicle,
             limit: pageSizeFromState.toString(),
             page: (pageIndexFromState + 1).toString(),
-            sortBy: objArrToSortByString(sortBy),
+            sortBy: view === 'map' ? 'createdAt:desc' : objArrToSortByString(sortBy),
           })
         );
       });
@@ -100,7 +102,7 @@ const ChargeSessions: React.FC = () => {
 
   return (
     <div style={{ touchAction: 'pan-y' }}>
-      <SessionNavigation current={id} sessionIds={sessions.map((el: any) => ({ _id: el._id, vid: el.vid }))} sessionType={'charge'} theme={theme === 'light' ? 'outline-dark' : 'outline-light'} />
+      <SessionNavigation current={id} sessionIds={sortedIds} sessionType={SessionType['charge']} theme={theme === 'light' ? 'outline-dark' : 'outline-light'} />
       {id ? (
         <SelectedChargeSession id={id} data={selectedSession} theme={theme ?? undefined} errors={singleSessionErrors} isConnected={isConnected} />
       ) : (

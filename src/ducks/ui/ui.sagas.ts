@@ -10,15 +10,16 @@ const loadingName = 'UI';
 
 export function* fetchUiSettings() {
   try {
-    const { error, isMobile } = yield select(({ uiState }: RootState) => ({
+    const { error, isMobile, mobileType } = yield select(({ uiState }: RootState) => ({
       error: uiState.uiError,
       isMobile: uiState.isMobile,
+      mobileType: uiState.mobileType,
     }));
     if (error) yield put(uiActions.setUiError(false));
 
     yield put(uiActions.setComponentLoading(loadingName));
     const { data } = yield call(getSettings, isMobile);
-    const newData = removeEmpty(isMobile ? data['mobile']['ui'] : data['desktop']['ui']);
+    const newData = removeEmpty(isMobile ? data[mobileType]['ui'] : data['desktop']['ui']);
     if (newData?.theme) {
       yield put(uiActions.setTheme(newData.theme));
     }
@@ -30,17 +31,18 @@ export function* fetchUiSettings() {
   }
 }
 
-export function* fetchSetUiSettings(action: any) {
+export function* setUiSettings(action: any) {
   try {
-    const { error, isMobile } = yield select(({ uiState }: RootState) => ({
+    const { error, isMobile, mobileType } = yield select(({ uiState }: RootState) => ({
       error: uiState.uiError,
       isMobile: uiState.isMobile,
+      mobileType: uiState.mobileType,
       uiState,
     }));
     if (error) yield put(uiActions.setUiError(false));
     yield put(uiActions.setComponentLoading(loadingName));
     yield call(updateSettings, {
-      [isMobile ? 'mobile' : 'desktop']: {
+      [isMobile ? mobileType : 'desktop']: {
         ui: action.payload,
       },
     });
@@ -53,5 +55,5 @@ export function* fetchSetUiSettings(action: any) {
 
 // watcher saga
 export default function uiSagas() {
-  return [takeEvery(uiTypes.GET_UI_FROM_DB_SETTINGS, fetchUiSettings), takeEvery(uiTypes.SET_DB_UI_SETTINGS, fetchSetUiSettings)];
+  return [takeEvery(uiTypes.GET_UI_FROM_DB_SETTINGS, fetchUiSettings), takeEvery(uiTypes.SET_DB_UI_SETTINGS, setUiSettings)];
 }

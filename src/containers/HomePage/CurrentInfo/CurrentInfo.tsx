@@ -289,10 +289,10 @@ const CurrentInfo = ({ theme, data }: any) => {
                   <Row key={'climate-title'} className="d-flex justify-content-between">
                     {' '}
                     <Col xs={6} md={6} className="text-start pe-0">
-                      {(cToF(inside_temp).toFixed(0) + '\u00b0').toString()}
+                      {(cToF(inside_temp)?.toFixed(0) + '\u00b0').toString()}
                     </Col>{' '}
                     <Col className="text-end ps-0" xs={6} md={6}>
-                      {(cToF(outside_temp).toFixed(0) + '\u00b0').toString()}
+                      {(cToF(outside_temp)?.toFixed(0) + '\u00b0').toString()}
                     </Col>
                   </Row>
                 ),

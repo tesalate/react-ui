@@ -74,6 +74,9 @@ const NavBar = () => {
               <NavDropdown.Item as={Link} to="/settings" eventKey="settings">
                 Settings
               </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/logs" eventKey="logbook">
+                Log Book
+              </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item as={Link} eventKey="logout" to={'/logout'}>
                 Log Out

@@ -49,6 +49,8 @@ const MasterTable = ({ data, columns, loading, actions, pageSizeFromState, pageI
       initialState: { pageIndex: pageIndexFromState, pageSize: pageSizeFromState, sortBy: sortBy },
       pageCount: totalPages,
       manualPagination: true,
+      manualSortBy: true,
+      disableSortRemove: true,
     },
     useSortBy,
     usePagination

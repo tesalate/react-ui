@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import ui from '../ducks/ui/ui.index';
 import mapPoints from '../ducks/mapPoints/mapPoints.index';
+import sessions from '../ducks/sessions/sessions.index';
 import driveSessions from '../ducks/driveSessions/driveSessions.index';
 import chargeSessions from '../ducks/chargeSessions/chargeSessions.index';
 import completeDataPoints from '../ducks/completeDataPoints/completeDataPoints.index';
@@ -26,7 +27,7 @@ export enum ActionTypes {
 localForage.config({
   name: process.env.REACT_APP_NAME + '_db',
   storeName: 'store',
-  version: 0.1,
+  version: 3,
 });
 
 const uiPersistConfig = {
@@ -53,6 +54,12 @@ const mapPointsPersistConfig = {
   blacklist: ['mapPointsError', 'mapPointsLoading'],
 };
 
+const sessionsPersistConfig = {
+  key: 'sessions',
+  storage: localForage,
+  blacklist: ['sessionsError'],
+};
+
 const statsPersistConfig = {
   key: 'stats',
   storage: localForage,
@@ -62,7 +69,7 @@ const statsPersistConfig = {
 const rootPersistConfig = {
   key: 'root',
   storage: localForage,
-  blacklist: ['userState', 'uiState', 'toastsState', 'completeDataPointsState', 'mapPointsState', 'statsState'],
+  blacklist: ['userState', 'uiState', 'toastsState', 'completeDataPointsState', 'mapPointsState', 'statsState', 'sessionsState'],
 };
 
 // export all reducers/state-pieces into a single reducer
@@ -71,6 +78,7 @@ const rootReducer = persistReducer(
   combineReducers({
     uiState: persistReducer(uiPersistConfig, ui),
     mapPointsState: persistReducer(mapPointsPersistConfig, mapPoints),
+    sessionsState: persistReducer(sessionsPersistConfig, sessions),
     driveSessionsState: driveSessions,
     chargeSessionsState: chargeSessions,
     completeDataPointsState: persistReducer(completeDataPointsPersistConfig, completeDataPoints),

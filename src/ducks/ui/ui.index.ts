@@ -12,6 +12,8 @@ export interface State {
   pageHasFocus: boolean;
   uiError: boolean;
   isConnected: boolean | null;
+  liveUpdates: boolean;
+  isSocketConnected: boolean;
   windowDimensions: Record<Axis, number>;
   operatingSystem: Record<any, any> | undefined;
   browser: string | undefined;
@@ -43,6 +45,8 @@ export const initialState: State = {
   lastRefresh: new Date(),
   pageHasFocus: true,
   isConnected: null,
+  liveUpdates: false,
+  isSocketConnected: false,
   windowDimensions: {
     width: 0,
     height: 0,
@@ -67,13 +71,14 @@ export const initialState: State = {
     Stats: [],
     TeslaAccount: [],
     FetchUser: [],
-    VehiclesUpdating: [],
+    RefreshingAccount: [],
     Vehicles: [],
     SelectingVehicle: [],
     TeslaVehiclesLoading: [],
     SendingVerificationEmail: [],
     VerifyRequest: [],
     RegisterUser: [],
+    Logs: [],
   },
   theme: undefined,
   autoTheme: true,
@@ -98,6 +103,8 @@ export enum ActionTypes {
   SET_DB_UI_SETTINGS = '[UI] SET_DB_UI_SETTINGS',
   SET_PAGE_FOCUS = '[UI] SET_PAGE_FOCUS',
   SET_CONNECTED = '[UI] SET_CONNECTED',
+  SET_LIVE_UPDATES = '[UI] SET_LIVE_UPDATES',
+  SET_SOCKET_CONNECTED = '[UI] SET_SOCKET_CONNECTED',
   SET_WINDOW_DIMENSIONS = '[UI] SET_WINDOW_DIMENSIONS',
   SET_OPERATING_SYSTEM = '[UI] SET_OPERATING_SYSTEM',
   SET_BROWSER = '[UI] SET_BROWSER',
@@ -122,6 +129,8 @@ export const actions = {
   setIsMobile: (value: string): Action => ({ type: ActionTypes.SET_IS_MOBILE, payload: value }),
   setIsStandAlone: (value: boolean): Action => ({ type: ActionTypes.SET_IS_STANDALONE, payload: value }),
   setIsConnected: (value: boolean): Action => ({ type: ActionTypes.SET_CONNECTED, payload: value }),
+  setLiveUpdates: (value: boolean): Action => ({ type: ActionTypes.SET_LIVE_UPDATES, payload: value }),
+  setIsSocketConnected: (value: boolean): Action => ({ type: ActionTypes.SET_SOCKET_CONNECTED, payload: value }),
   setWindowDimensions: (value: Record<Axis, number>): Action => ({ type: ActionTypes.SET_WINDOW_DIMENSIONS, payload: value }),
   setOperatingSystem: (value: Record<any, any>): Action => ({ type: ActionTypes.SET_OPERATING_SYSTEM, payload: value }),
   setBrowser: (value: string): Action => ({ type: ActionTypes.SET_BROWSER, payload: value }),
@@ -187,6 +196,10 @@ const reducer = (state: State = initialState, action: Action) => {
       return { ...state, autoTheme: action.payload };
     case ActionTypes.SET_DISTANCE_BETWEEN:
       return { ...state, map: { distanceBetween: action.payload } };
+    case ActionTypes.SET_LIVE_UPDATES:
+      return { ...state, liveUpdates: action.payload };
+    case ActionTypes.SET_SOCKET_CONNECTED:
+      return { ...state, isSocketConnected: action.payload };
     default: {
       return state;
     }

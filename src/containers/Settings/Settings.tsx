@@ -8,7 +8,7 @@ import { RootState } from '../../redux/reducers';
 import { Row, Col, ListGroup, Tab } from 'react-bootstrap';
 import { useParams, Link, useHistory } from 'react-router-dom';
 
-const ThemePreferences = lazy(() => import('./ThemePreferences/ThemePreferences'));
+const Application = lazy(() => import('./ApplicationPrefs/ApplicationPrefs'));
 const TeslaAdmin = lazy(() => import('./TeslaAdmin/TeslaAdmin'));
 const Profile = lazy(() => import('./Profile/Profile'));
 const Account = lazy(() => import('./Account/Account'));
@@ -28,13 +28,14 @@ const Settings: React.FC = () => {
     if (!tab) history.push('/settings/profile');
   }, [tab, history]);
 
-  const { autoTheme, theme, user, teslaAccount, loading, vehicles } = useSelector(({ uiState, userState, teslaAccountState, vehiclesState }: RootState) => ({
+  const { autoTheme, theme, user, teslaAccount, loading, vehicles, liveUpdates } = useSelector(({ uiState, userState, teslaAccountState, vehiclesState }: RootState) => ({
     theme: uiState.theme,
     autoTheme: uiState.autoTheme,
     user: userState.user,
     vehicles: vehiclesState.vehicles,
     teslaAccount: teslaAccountState.account,
     loading: uiState.loading,
+    liveUpdates: uiState.liveUpdates,
   }));
 
   useEffect(() => {
@@ -52,6 +53,12 @@ const Settings: React.FC = () => {
       dispatchObj['theme'] = val;
     }
     dispatch(uiActions.setDBUiSettings(dispatchObj));
+  };
+
+  const handleLiveUpdatesChange = (val: any) => {
+    const dispatchObj: Partial<UIState> = { liveUpdates: val };
+    dispatch(uiActions.setDBUiSettings(dispatchObj));
+    dispatch(uiActions.setLiveUpdates(val));
   };
 
   const handleVehicleChange = (val: string) => {
@@ -75,9 +82,9 @@ const Settings: React.FC = () => {
       comp: <AccountSecurity />,
     },
     {
-      name: 'appearance',
-      displayName: 'Appearance',
-      comp: <ThemePreferences autoTheme={autoTheme} theme={theme} handleChange={handleThemeChange} />,
+      name: 'application',
+      displayName: 'Application',
+      comp: <Application autoTheme={autoTheme} theme={theme} handleThemeChange={handleThemeChange} liveUpdates={liveUpdates} handleLiveUpdatesChange={handleLiveUpdatesChange} />,
     },
     {
       name: 'tesla-account',
@@ -99,7 +106,7 @@ const Settings: React.FC = () => {
             <Col sm={12} md={4} lg={4} xl={4} className="mb-4">
               <ListGroup>
                 <ListGroup.Item variant={themeColor} style={{ backgroundColor: 'rgba(0,0,0,.1)', color: 'var(--text-color)' }}>
-                  <b>Account Settings</b>
+                  <b>Settings</b>
                 </ListGroup.Item>
                 {tabs.map((el: { name: string; displayName: string; comp: any }) => (
                   <ListGroup.Item

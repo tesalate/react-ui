@@ -49,7 +49,7 @@ const LeafletMap = (props: IBreadCrumbProps) => {
   usePreloadImages(preload);
 
   const dispatch = useDispatch();
-  const [selectedPointId, setSelectedPointId] = useState<{ _id?: string; vid?: string }>({ vid: undefined, _id: undefined });
+  const [selectedPointId, setSelectedPointId] = useState<{ _id?: string; vehicle?: string }>({ vehicle: undefined, _id: undefined });
   const [bounds, setBounds]: any = useState();
   const markerRef = useRef<any>(null);
   const firstLoadRef = useRef<any>([]);
@@ -100,13 +100,14 @@ const LeafletMap = (props: IBreadCrumbProps) => {
     []
   );
 
-  const onMarkerClick = (_id: string, vid: string) => {
-    setSelectedPointId({ _id, vid });
+  const onMarkerClick = (_id: string, vehicle: string) => {
+    console.log('WHAT: ', { _id, vehicle, mapPoints });
+    setSelectedPointId({ _id, vehicle });
   };
 
   useEffect(() => {
-    if (selectedPointId._id && selectedPointId.vid && !(dataPoints as { [key: string]: {} })[selectedPointId._id]) {
-      dispatch(completeDataPointsActions.requestCompleteDataPoint(selectedPointId._id, selectedPointId.vid));
+    if (selectedPointId._id && selectedPointId.vehicle && !(dataPoints as { [key: string]: {} })[selectedPointId._id]) {
+      dispatch(completeDataPointsActions.requestCompleteDataPoint(selectedPointId._id, selectedPointId.vehicle));
     }
   }, [selectedPointId, currentVehicles, dataPoints, dispatch]);
 
@@ -239,7 +240,7 @@ const LeafletMap = (props: IBreadCrumbProps) => {
                     <Spinner as="span" animation="border" role="status" aria-hidden="true" />
                   </div>
                 ) : null}
-                {(dataPoints as { [key: string]: {} })[current._id] && current._id === selectedPointId._id ? LeafletPopupData({ ...(dataPoints as { [key: string]: {} })[current._id], vid: _position.vehicle, home }) : null}
+                {(dataPoints as { [key: string]: {} })[current._id] && current._id === selectedPointId._id ? LeafletPopupData({ ...(dataPoints as { [key: string]: {} })[current._id], vehicle: currentVehicles[0], home }) : null}
               </Popup>
             );
 
@@ -262,12 +263,12 @@ const LeafletMap = (props: IBreadCrumbProps) => {
                     key={`marker-${current._id}`}
                     position={[current.drive_state.latitude, current.drive_state.longitude]}
                     icon={modelThreeIcon}
-                    eventHandlers={{ click: () => onMarkerClick(current._id, _position.vehicle) }}
+                    eventHandlers={{ click: () => onMarkerClick(current._id, currentVehicles[0]) }}
                   >
                     {PopupComp}
                   </Marker>
                 ) : (
-                  <Marker key={`marker-${current._id}`} position={[current.drive_state.latitude ?? 0, current.drive_state.longitude ?? 0]} icon={dotIcon} eventHandlers={{ click: () => onMarkerClick(current._id, _position.vehicle) }}>
+                  <Marker key={`marker-${current._id}`} position={[current.drive_state.latitude ?? 0, current.drive_state.longitude ?? 0]} icon={dotIcon} eventHandlers={{ click: () => onMarkerClick(current._id, currentVehicles[0]) }}>
                     {PopupComp}
                   </Marker>
                 )}

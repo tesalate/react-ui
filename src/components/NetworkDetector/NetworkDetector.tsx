@@ -7,7 +7,6 @@ import './NetworkDetector.css';
 
 const NetworkDetector: React.FC = () => {
   const dispatch = useDispatch();
-
   const { isConnected } = useSelector(({ uiState }: RootState) => ({
     isConnected: uiState.isConnected,
     theme: uiState.theme,

@@ -33,7 +33,7 @@ export enum ActionTypes {
   SET_TESLA_ACCOUNT = '[TESLA_ACCOUNT] SET_TESLA_ACCOUNT',
   SET_TESLA_ACCOUNT_ERROR = '[TESLA_ACCOUNT] SET_TESLA_ACCOUNT_ERROR',
   REMOVE_TESLA_ACCOUNT_ERROR = '[TESLA_ACCOUNT] REMOVE_TESLA_ACCOUNT_ERROR',
-  REFRESH_TESLA_VEHICLES = '[TESLA_ACCOUNT] REFRESH_TESLA_VEHICLES',
+  REFRESH_TESLA_ACCOUNT = '[TESLA_ACCOUNT] REFRESH_TESLA_ACCOUNT',
   UPDATE_MINING_STATUS = '[TESLA_ACCOUNT] UPDATE_MINING_STATUS',
 }
 
@@ -43,7 +43,7 @@ export const actions = {
   setTeslaAccount: (value: Array<any>): Action => ({ type: ActionTypes.SET_TESLA_ACCOUNT, payload: value }),
   setTeslaAccountError: (value: boolean): Action => ({ type: ActionTypes.SET_TESLA_ACCOUNT_ERROR, payload: value }),
   removeTeslaAccountError: (value: string): Action => ({ type: ActionTypes.REMOVE_TESLA_ACCOUNT_ERROR, payload: value }),
-  refreshTeslaVehicles: (): Action => ({ type: ActionTypes.REFRESH_TESLA_VEHICLES }),
+  refreshTeslaAccount: (): Action => ({ type: ActionTypes.REFRESH_TESLA_ACCOUNT }),
   updateMiningStatus: (vid: number, active: boolean): Action => ({ type: ActionTypes.UPDATE_MINING_STATUS, payload: { vid, active } }),
 };
 

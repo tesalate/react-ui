@@ -71,7 +71,13 @@ const SelectedDriveSession: React.FC<SelectedSessionData> = ({ id, data = {}, th
   const colors = useMemo(
     () => [
       // blue
-      { backgroundColor: 'rgba(102, 194, 255,.4)', borderColor: 'rgba(102, 194, 255,1)', pointBorderColor: 'rgba(102, 194, 255,1)', pointHoverBackgroundColor: 'rgba(102, 194, 255,1)', pointHoverBorderColor: 'rgba(220,220,220,1)' },
+      {
+        backgroundColor: 'rgba(102, 194, 255,.4)',
+        borderColor: 'rgba(102, 194, 255,1)',
+        pointBorderColor: 'rgba(102, 194, 255,1)',
+        pointHoverBackgroundColor: 'rgba(102, 194, 255,1)',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+      },
       // green
       {
         backgroundColor: `rgba(${themedColor[0]},.4)`,

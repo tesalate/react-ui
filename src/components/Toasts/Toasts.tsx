@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { actions as toastActions } from '../../ducks/toasts/toasts.index';
 import { actions as vehiclesActions, selectors as vehicleSelectors } from '../../ducks/vehicles/vehicles.index';
 import { Link } from 'react-router-dom';
+import sessionIcons from '../../utils/sessionIcons';
 
 const Toasts = () => {
   const dispatch = useDispatch();
@@ -41,25 +42,16 @@ const Toasts = () => {
   return (
     <ToastContainer className={`mb-${isMobile ? '4' : '2'}`} position={'bottom-center'} style={{ zIndex: 9999999 }}>
       {activeToasts
-        .sort((a, b) => b.startDate - a.startDate)
+        .sort((a: IToastObj, b: IToastObj) => new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf())
         .map((toastObj: IToastObj) => {
           const { _id, vid, type, startDate } = toastObj;
           return (
             <Toast key={_id} onClose={() => handleClick(toastObj)} animation={true} style={{ ...style }}>
               <Toast.Header style={{ ...style, borderRadius: '.6rem' }}>
-                <Link to={`/${type}/${_id}`} onClick={() => handleClick(toastObj)} style={{ textDecoration: 'none' }} className="me-auto">
-                  {type === 'charge-sessions' && (
-                    <span className="me-2" role="img" aria-label="high-voltage">
-                      ⚡
-                    </span>
-                  )}
-                  {type === 'drive-sessions' && (
-                    <span className="me-2" role="img" aria-label="automobile">
-                      🚗
-                    </span>
-                  )}
+                <Link to={`/${type}-sessions/${_id}`} onClick={() => handleClick(toastObj)} style={{ textDecoration: 'none' }} className="me-auto">
+                  {sessionIcons.get(type)}
                   <strong>
-                    {vehicleSelectors.getVehicleName(vehicles, vid)} started {type.split('-')[0].replace('e', 'ing')}
+                    {vehicleSelectors.getVehicleName(vehicles, vid)} started {type.split('-')[0]?.replace('e', 'ing')}
                   </strong>
                 </Link>
                 <small className="text-muted text-end">

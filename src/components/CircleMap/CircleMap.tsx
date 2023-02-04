@@ -44,8 +44,8 @@ const CircleMap = (props: ICircleProps) => {
   const data = useMemo(
     () =>
       mapPoints.map((dataItem, k: number) => {
-        let { geoJSON = { coordinates: [] }, _id, supercharger, startDate, maxChargeRate, energyAdded } = dataItem;
-        let { coordinates } = geoJSON;
+        let { startLocation = { coordinates: [] }, _id, supercharger, createdAt, maxChargeRate, energyAdded } = dataItem;
+        let { coordinates } = startLocation;
         if (supercharger?.title && !supercharger?.title.toLowerCase().includes('supercharger')) supercharger.title += ' Supercharger';
         const [a, b] = coordinates as [number, number];
         if (a && b) {
@@ -57,7 +57,7 @@ const CircleMap = (props: ICircleProps) => {
                   <b>{supercharger?.title}</b>
                 </p>
                 <p>
-                  Date: <Moment format={'MM/DD/YYYY HH:mm:ss'}>{startDate}</Moment>
+                  Date: <Moment format={'MM/DD/YYYY HH:mm:ss'}>{createdAt}</Moment>
                 </p>
                 <p>Max Rate: {maxChargeRate}kW</p>
                 <p>Energy Added: {energyAdded}kWh</p>

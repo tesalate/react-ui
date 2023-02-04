@@ -49,7 +49,7 @@ export const actions = {
   setCompleteDataPointsError: (value: boolean): Action => ({ type: ActionTypes.SET_DATA_POINTS_ERROR, payload: value }),
   setCompleteDataPointsLoading: (value: boolean): Action => ({ type: ActionTypes.SET_DATA_POINTS_LOADING, payload: value }),
   socketUpdate: (value: Record<any, any>): Action => ({ type: ActionTypes.SOCKET_UPDATE, payload: value }),
-  setCompleteDataPointCount: (vid: string, data: any): Action => ({ type: ActionTypes.SET_COUNT, payload: { vid, data } }),
+  setCompleteDataPointCount: (vehicle: string, data: any): Action => ({ type: ActionTypes.SET_COUNT, payload: { vehicle, data } }),
 };
 
 /* ===== SELECTORS ===== */
@@ -69,7 +69,7 @@ const reducer = (state: State = initialState, action: Action) => {
     case ActionTypes.SOCKET_UPDATE:
       return { ...state, dataPoints: { ...state.dataPoints, [action.payload._id]: action.payload }, mostRecent: { ...state.mostRecent, [action.payload.vehicle]: action.payload._id } };
     case ActionTypes.SET_COUNT:
-      return { ...state, count: { ...state.count, [action.payload.vid]: action.payload.data } };
+      return { ...state, count: { ...state.count, [action.payload.vehicle]: action.payload.data } };
     default: {
       return state;
     }

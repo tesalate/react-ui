@@ -22,10 +22,11 @@ export function* fetchChargeSessions(action: any) {
     yield put(uiActions.setComponentLoading(loadingName));
     if (isConnected || sessions.length === 0) {
       const {
-        data: { results, totalPages },
+        data: { results, totalPages, sortedIds },
       } = yield call(getChargeData, { ...action.payload, limit: view === 'map' ? 0 : action.payload.limit });
       yield put(chargeSessionActions.setPageOption('totalPages', totalPages));
-      yield put(chargeSessionActions.setChargeSessions(results));
+      yield put(chargeSessionActions.setPageOption('sortedIds', sortedIds));
+      yield put(chargeSessionActions.setChargeSessions(action.payload.vehicle, results));
     }
   } catch (error) {
     // handle ui effects
@@ -53,7 +54,7 @@ export function* fetchChargeSessionById(action: any) {
     yield put(uiActions.setComponentLoading('SingleChargeSessions'));
     if (isConnected || isEmpty(sessionData[action.payload.id])) {
       const { data } = yield call(getChargeDataById, { id: action.payload.id });
-      yield put(chargeSessionActions.setChargeSessionById(data));
+      yield put(chargeSessionActions.setChargeSessionById(data.result));
     }
   } catch (error) {
     // handle ui effects
@@ -80,7 +81,7 @@ export function* fetchPaginatedChargeSessions(action: any) {
     const {
       data: { data },
     } = yield call(getPaginatedChargeData, vid, skip, limit);
-    yield put(chargeSessionActions.setChargeSessions(data));
+    yield put(chargeSessionActions.setChargeSessions(vid, data));
     yield put(uiActions.removeComponentLoading(loadingName));
   } catch (error) {
     // handle ui effects

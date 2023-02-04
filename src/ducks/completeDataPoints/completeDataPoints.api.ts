@@ -9,7 +9,7 @@ export const getCompleteDataPoint = async (id: string, vid: string) => {
 };
 
 export const getMostRecentDataPoint = async (vid: string) => {
-  let url = `${apiEndpoint}/?sortBy=_id:desc&limit=1&vehicle=${vid}`;
+  let url = `${apiEndpoint}/?sortBy=$natural:desc&limit=1&vehicle=${vid}`;
   const response = await http.get(url);
   return response;
 };

@@ -116,12 +116,11 @@ const HomePage: React.FC = () => {
       ),
     [currentVehiclesMemo, allReminders, dataPoints, mostRecent]
   );
-
   return (
     <div style={{ touchAction: 'pinch-zoom' }}>
       {remindersToDisplay.map((reminder: IReminder) => (
         <span key={reminder._id}>
-          <Reminder reminder={reminder} vehicleMiles={(dataPoints as any)[mostRecent[reminder.vid]]?.vehicle_state?.odometer} />
+          <Reminder reminder={reminder} vehicleMiles={(dataPoints as any)[mostRecent[reminder.vehicle]]?.vehicle_state?.odometer} />
         </span>
       ))}
       {currentInfoPropsArray.map((data: any, idx: number) => (

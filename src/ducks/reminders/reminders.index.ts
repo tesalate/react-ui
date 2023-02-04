@@ -8,7 +8,7 @@ export interface IReminder {
   message: string;
   when: number;
   vehicleId: number;
-  vid: string;
+  vehicle: string;
   completed: boolean;
   createdAt: Date;
   remindWithin: number;
@@ -36,7 +36,7 @@ export enum ActionTypes {
 
 /* ===== ACTION_CREATORS ===== */
 export const actions = {
-  requestReminders: (vid: string): Action => ({ type: ActionTypes.REQUEST_REMINDERS, payload: vid }),
+  requestReminders: (vehicle: string): Action => ({ type: ActionTypes.REQUEST_REMINDERS, payload: vehicle }),
   setReminders: (value: Array<IReminder>): Action => ({ type: ActionTypes.SET_REMINDERS, payload: value }),
   setRemindersError: (value: boolean): Action => ({ type: ActionTypes.SET_REMINDERS_ERROR, payload: value }),
 };

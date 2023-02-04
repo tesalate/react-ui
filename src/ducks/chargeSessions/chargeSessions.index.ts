@@ -5,7 +5,7 @@ import { chargeSessionQuery } from './chargeSessions.api';
 export interface IChargeSession {
   _id: string;
   dataPoints?: [string];
-  startDate: Date | string;
+  createdAt: Date | string;
   __v?: number;
   endDate: Date | string;
   vehicleId?: number;
@@ -15,6 +15,10 @@ export interface IChargeSession {
   maxChargeRate?: number;
   supercharger: { title: string };
   geoJSON: {
+    type: string;
+    coordinates: [number, number];
+  };
+  startLocation: {
     type: string;
     coordinates: [number, number];
   };
@@ -31,6 +35,7 @@ export interface State {
   pageSize: number;
   totalPages: number;
   sortBy: { id: string; desc: boolean }[];
+  sortedIds: string[];
 }
 
 export interface Action {
@@ -48,7 +53,8 @@ export const initialState: State = {
   pageIndex: 0,
   pageSize: 14,
   totalPages: 0,
-  sortBy: [{ id: 'startDate', desc: true }],
+  sortBy: [{ id: 'createdAt', desc: true }],
+  sortedIds: [],
 };
 
 /* ===== TYPES ===== */
@@ -70,7 +76,7 @@ export enum ActionTypes {
 export const actions = {
   requestChargeSessions: (value: chargeSessionQuery): Action => ({ type: ActionTypes.REQUEST_CHARGE_SESSIONS, payload: value }),
   requestSessionById: (id: string): Action => ({ type: ActionTypes.REQUEST_CHARGE_SESSION_BY_ID, payload: { id } }),
-  setChargeSessions: (value: Array<any>): Action => ({ type: ActionTypes.SET_CHARGE_SESSIONS, payload: value }),
+  setChargeSessions: (vehicle: string, sessions: Array<any>): Action => ({ type: ActionTypes.SET_CHARGE_SESSIONS, payload: { vehicle, sessions } }),
   setChargeSessionById: (value: Record<any, any>): Action => ({ type: ActionTypes.SET_CHARGE_SESSION_BY_ID, payload: value }),
   setSelectedSession: (value: string): Action => ({ type: ActionTypes.SET_SELECTED_SESSION, payload: value }),
   setChargeSessionsError: (value: boolean): Action => ({ type: ActionTypes.SET_CHARGE_SESSIONS_ERROR, payload: value }),
@@ -96,7 +102,7 @@ export const selectors = {
 const reducer = (state: State = initialState, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_CHARGE_SESSIONS:
-      return { ...state, sessions: { ...state.sessions, [action.payload?.[0].vehicle]: action.payload } };
+      return { ...state, sessions: { ...state.sessions, [action.payload.vehicle]: action.payload.sessions } };
     case ActionTypes.SET_SELECTED_SESSION:
       return { ...state, selectedSession: action.payload };
     case ActionTypes.SET_CHARGE_SESSION_BY_ID:
@@ -120,7 +126,7 @@ const reducer = (state: State = initialState, action: Action) => {
     case ActionTypes.SOCKET_UPDATE: {
       let sess = state.sessions[action.payload.vehicle] ?? [];
       const index = sess.findIndex((e: IChargeSession) => e._id === action.payload._id);
-      const updatedSession = pick(action.payload, ['_id', 'startDate', 'endDate', 'maxChargeRate', 'energyAdded', 'supercharger']);
+      const updatedSession = pick(action.payload, ['_id', 'sessionData', 'metadata', 'graphData']);
 
       if (index === -1) {
         sess = [...sess, updatedSession];
@@ -132,7 +138,7 @@ const reducer = (state: State = initialState, action: Action) => {
         sessions: { ...state.sessions, [action.payload.vehicle]: sess.map((s: IChargeSession) => s) },
         sessionData: {
           ...state.sessionData,
-          [action.payload._id]: action.payload.aggregateData,
+          [action.payload._id]: action.payload,
         },
       };
     }

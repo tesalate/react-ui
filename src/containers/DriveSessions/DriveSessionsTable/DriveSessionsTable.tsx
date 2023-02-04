@@ -3,6 +3,7 @@ import MasterTable from '../../../components/MasterTable/MasterTable';
 import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { actions as driveSessionActions } from '../../../ducks/driveSessions/driveSessions.index';
+import { timeConversion } from '../../../utils/convert';
 
 interface DriveSessionsTableProps {
   sessions: Array<any>;
@@ -28,7 +29,7 @@ const DriveSessionsTable: React.FC<DriveSessionsTableProps> = ({ sessions, loadi
       },
       {
         Header: 'Date/Time',
-        accessor: 'startDate',
+        accessor: 'createdAt',
         Cell: (data: any) => <Moment format={'MM/DD/YYYY HH:mm:ss'}>{data.value}</Moment>,
         sortType: 'basic',
       },
@@ -36,7 +37,8 @@ const DriveSessionsTable: React.FC<DriveSessionsTableProps> = ({ sessions, loadi
         Header: 'Distance',
         accessor: 'distance',
         Cell: (data: any) => {
-          return data.value + ' miles';
+          // return data.value + ' miles';
+          return data.value?.toFixed(2) + ' miles';
         },
         sortType: 'basic',
       },
@@ -66,13 +68,11 @@ const DriveSessionsTable: React.FC<DriveSessionsTableProps> = ({ sessions, loadi
       },
       {
         Header: 'Duration',
-        accessor: (data: any) => ({ startDate: data.startDate, endDate: data.endDate, ms: new Date(data.endDate).getTime() - new Date(data.startDate).getTime() }),
+        accessor: 'duration',
         Cell: (data: any) => {
-          return <Moment duration={data.value.startDate} date={data.value.endDate} />;
+          return timeConversion(data.value);
         },
-        sortType: (a: any, b: any) => {
-          return b.values.Duration.ms - a.values.Duration.ms;
-        },
+        sortType: 'basic',
       },
     ],
     []

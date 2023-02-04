@@ -11,6 +11,7 @@ const BUILD_ENVIRONMENT = process.env.BUILD_ENVIRONMENT || 'production';
   // CREATE THE ENVS OBJECT THAT WILL BE INJECTED INTO .env BASED ON BUILD_ENVIRONMENT
   switch (BUILD_ENVIRONMENT) {
     case 'local':
+    case 'dev':
       envs = {
         ...envs,
         REACT_APP_API_URL: 'http://localhost:4400',
@@ -31,6 +32,7 @@ const BUILD_ENVIRONMENT = process.env.BUILD_ENVIRONMENT || 'production';
       envs = {
         ...envs,
         REACT_APP_API_URL: 'https://app.tesalate.io',
+        // REACT_APP_API_URL: 'https://tesalate-api.herokuapp.com',
         BUILD_ENVIRONMENT: 'production',
         REACT_APP_NAME: 'tesalate',
       };
